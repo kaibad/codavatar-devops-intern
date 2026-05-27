@@ -433,7 +433,44 @@ free -h           # RAM and swap usage
 ![Screenhot of free -h](../images/screenshots/free.png)
 
 ## Scheduling with cron jobs
+A cron job is a scheduled task that allows to run scripts or commands at specfied intervals.
 
+cron jobs are heavily used in devops because cron jobs automate repetitive tasks ensuring they run at ssceduled time without manual intervention.
+
+Example: Backing up files, Running maintenance or sending email reports.
+
+### working of cron jobs
+
+Cron uses a daemon (a background process) called cron to execure scheduled tasks.
+
+and the configuration of these tasks is stored in a file called a crontab.
+
+
+```bash
+    crontab -e # command to edit cronteb
+    crontab -l # view current cron jobs
+    crontab -r # delete the cron jobs
+```
+
+**note** we should be more carefull while removing teh johbs since it will remove all the jobs and the crontab jobs are user spedific.
+
+### format of a crontab
+
+```bash
+    * * * * * command
+```
+
+first star: Minute (0-30)
+seconf star: hour(0-30)
+third star: day of the month (0-31)
+fourth star: Month (1-12)
+fifth star: Day of the weeks(0-7) and sunday is 0 or 7
+
+
+```
+* * * * * meams every minute
+```
+![Screenhot of crontab -e](../images/screenshots/crontab.png)
 
 ## file searching
 
@@ -544,5 +581,5 @@ top
 - https://www.geeksforgeeks.org/linux-unix/linux-file-hierarchy-structure/
 - inode: https://www.youtube.com/watch?v=ScDv02ff8oc
 - process:  https://youtu.be/H9DAWegYpag?si=yJTWXP1FEWJHgXP0
-
+- cronjob: https://crontab.guru/
  
