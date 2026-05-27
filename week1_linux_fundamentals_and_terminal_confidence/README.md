@@ -338,7 +338,7 @@ to the group fo the file we can use chgrp
 
 `chgrp kailash file.txt`
 
-![Screenhot of mkdir -p](../images/screenshots/permissions.png)
+![Screenhot of permissions](../images/screenshots/permisssions.png)
 
 ## Processed and logs
 
