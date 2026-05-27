@@ -307,13 +307,54 @@ set -euo pipefail
 ls 
 
 ```
+# Practical Commands and Lab flow
+
+```bash
+# Task 1
+mkdir -p ~/devops-internship/week1/{scripts,logs,notes,backup}
+cd ~/devops-internship/week1
+pwd
+tree
+
+# Output below in ss
+
+# Task 2
+echo "DevOps Linux Practice" > notes/intro.txt
+cp notes/intro.txt backup/intro-copy.txt
+mv backup/intro-copy.txt backup/intro-backup.txt
+rm -i backup/intro-backup.txt
+
+# Task 3
+cat > scripts/system_info.sh <<'EOF'
+#!/bin/bash
+echo "User: $(whoami)"
+echo "Date: $(date)"
+echo "Current directory: $(pwd)"
+echo "Disk usage:"
+df -h
+echo "Memory usage:"
+free -h
+EOF
+chmod +x scripts/system_info.sh
+./scripts/system_info.sh | tee logs/system-info.log
+grep "User" logs/system-info.log
+ps aux | head
+top
+```
+
+
 
 ## Screnshots
 
 ![Screenhot of mkdir -p](../images/screenshots/create-directory.png)
+![Screenhot of Task 2](../images/screenshots/task2.png)
+![Screenhot of task 3](../images/screenshots/task3.png)
+
 
 
 ## Commands i Used and their practical meaning
+
+### task 1
 
 - mkdir -p devops-internship/week1/{scripts,logs,notes,backup}: this creates multipe directory in a hierarchical way.-p tells is no pareent directory create and then crete those directory so when i enter the command then if the parent directory is already present then it creates the child directoy if the parent directory is absent then it creates the parent directory first.
 
@@ -324,6 +365,25 @@ ls
 - sudo apt update: it updates the package lists for upgrades for packages that need upgrading, as well as new packages that have just come to the repositories.   
 
 - stat:  display file or file system status
+
+
+### task 2
+
+- `echo "DevOps Linux Practice" > notes/intro.txt` : echo command is used to print the content in the termnal but here the content is redireted to the notes/intro.txt . if the file is not present it create the file and write the content. similar to this `>` there is another '>>' the only difference is that `>` replaces the whole content while `>>` just append the content to the end of the file
+
+- ``cat notes/intro.txt: The cat (concatenate) command in Linux is used to view, create, and combine file contents directly from the terminal. It allows users to quickly work with file content without opening a text editor. Primarily used to display the contents of files on the terminal.It Can concatenate multiple files and display them as a single continuous output.
+
+- `cp notes/intro.txt backup/intro-backup.txt`: it copies the file intro.txt from notes dir to intor-backup.txt in backup dir
+
+- `mv backup/intro-backup.txt backup/intro-backup-copy.txt` here the mv command is used to rename the file intro-backup.txt to into-backup-copy.txt
+
+- `rm -i backup/intro-backup-copy.txt`: this commnds is used to remove or delte the intro-backup-copy.txt file and the flag -i is used to confirm before deleting.
+
+
+
+
+
+
 ## References
 
 - https://www.geeksforgeeks.org/linux-unix/linux-file-hierarchy-structure/
