@@ -472,10 +472,6 @@ fifth star: Day of the weeks(0-7) and sunday is 0 or 7
 ```
 ![Screenhot of crontab -e](../images/screenshots/crontab.png)
 
-## file searching
-
-find, grep, awk,sed, 
-
 
 ## logs dir structure
 
@@ -488,7 +484,19 @@ find, grep, awk,sed,
 
 ## Bash Scripting
 
-shebang 
+Scripts are how I should use to stop myself repeating from wrting the same commands over and over. Any sequence of commands I run more than twice should probably be a script.
+
+### The Shebang and Safe Defaults
+
+Every script I write starts with these two lines:
+
+```bash
+#!/bin/bash
+set -euo pipefail
+```
+
+The shebang #!/bin/bash tells the system which interpreter to use. The set line enforces three important behaviours. set -e means the script exits immediately if any command fails instead of continuing and silently making things worse. set -u means the script treats undefined variables as errors. set -o pipefail means a pipeline fails if any command in it fails, not just the last one.
+
 
 ```bash
 #!/bin/bash
@@ -498,6 +506,8 @@ set -euo pipefail
 ls 
 
 ```
+
+
 # Practical Commands and Lab flow
 
 ```bash
