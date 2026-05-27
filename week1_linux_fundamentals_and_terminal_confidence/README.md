@@ -168,6 +168,8 @@ In the FHS, all files and directories appear under the root directory /, even if
 - `/sys`: virtual filesystem for hardware and kernel info.
 - `/dev`: it contains device files like /dev/nvme0n1
 
+I explored /etc on my own machine and found config files for SSH, cron, network interfaces, and installed packages. This is where I will edit service configuration in later weeks.
+
 ## Links
 
 Links are the special files that point to another file or directory. They are widely used in file sharing, storage optimization, configuration management, backup systemsand ci/cd pipelines.
@@ -256,9 +258,87 @@ Soft link is similar to a paper note with a house address if the house if demoli
 ![Screenhot of mkdir -p](../images/screenshots/softlink.png)
 
 
-
 ## Permissions
-chmod, usemod, chown, useradd, groupadd, /etc/groups, /etc/passwd, /etc/shadow
+
+In linux permissionsa define who can access a file or directory and what actions teht can perfom.
+
+Every file has three types of permissions. Read(r), write(w), execute(x)
+
+And the three types of usets: Owner(user), Group(g), others(o)
+
+THe users who created the file is owner. THe users who belongs to the same group is the groups user and all the other user in the system are others.
+
+r= View file content
+w= modify file
+x= fun file or script
+
+we can simply view the permissions using the command `ls -l or ll`
+
+```bash
+kailashbadu@ubuntu:~/Desktop/Learning/codavatar-devops-intern/week1_linux_fundamentals_and_terminal_confidence$ ll
+total 76
+drwxrwxr-x 7 kailashbadu kailashbadu  4096 May 27 12:30 ./
+drwxrwxr-x 6 kailashbadu kailashbadu  4096 May 27 11:51 ../
+drwxrwxr-x 2 kailashbadu kailashbadu  4096 May 27 12:08 backup/
+-rw-rw-r-- 1 kailashbadu kailashbadu  4401 May 25 12:19 day1.md
+drwxrwxr-x 2 kailashbadu kailashbadu  4096 May 25 12:42 logs/
+drwxrwxr-x 2 kailashbadu kailashbadu  4096 May 27 12:05 notes/
+-rw-rw-r-- 1 kailashbadu kailashbadu 13276 May 27 12:24 README.md
+-rw-r--r-- 1 kailashbadu kailashbadu 24576 May 27 12:38 .README.md.swp
+drwxrwxr-x 2 kailashbadu kailashbadu  4096 May 25 12:42 scripts/
+drwxrwxr-x 2 kailashbadu kailashbadu  4096 May 25 12:42 weekly_submissions/
+
+```
+
+explanation of `-rw-rw-r-- 1 kailashbadu kailashbadu  4401 May 25 12:19 day1.md`
+
+- -rw-rw-r-- : this is permission string it has 664 permission means owner have read and write perm and same as the gruoup while all other user in the system has only read perm
+
+- 1 is the count of hardlink
+
+- kailashbadu is the owner user
+
+- kailashbadu is the group name
+
+- 4401 is the sze of the file 4.4kb
+
+- may 25 12:19 is the timestamps
+
+- day1.md is the name of the file
+
+### Changing permissions
+
+we use chmod to hange the permission of the 
+
+```bash
+chmod u+x file.sh   # add execute to owner
+chmod g-w file.sh   # remove write from group
+chmod o+r file.sh   # add read to others
+chmod a+rwx file.txt # all permissions to all
+chmod u=rwx,g=rw,o=r script.sh
+
+```  
+
+we can change this with the numeric (octal 3 bit mehtod)
+
+7- rwx
+6 - rw-
+5 - r-x
+4 r--
+
+Too change the ownweship of the file we use chown.
+
+Every file belongs to auser and a group.
+
+`chown user file.sh # change owner`
+`chown user:group file.sh` change owner and group
+
+
+to the group fo the file we can use chgrp
+
+`chgrp kailash file.txt`
+
+![Screenhot of mkdir -p](../images/screenshots/permissions.png)
 
 ## Processed and logs
 
@@ -345,14 +425,18 @@ top
 
 
 ## Screnshots
-
+## task 1
 ![Screenhot of mkdir -p](../images/screenshots/create-directory.png)
+
+## task 2
 ![Screenhot of Task 2](../images/screenshots/task2.png)
+
+## task 3
 ![Screenhot of task 3](../images/screenshots/task3.png)
 
 
 
-## Commands i Used and their practical meaning
+## Commands used for tasks and their practical meaning
 
 ### task 1
 
@@ -378,9 +462,6 @@ top
 - `mv backup/intro-backup.txt backup/intro-backup-copy.txt` here the mv command is used to rename the file intro-backup.txt to into-backup-copy.txt
 
 - `rm -i backup/intro-backup-copy.txt`: this commnds is used to remove or delte the intro-backup-copy.txt file and the flag -i is used to confirm before deleting.
-
-
-
 
 
 
