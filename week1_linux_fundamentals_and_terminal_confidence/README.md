@@ -340,31 +340,105 @@ to the group fo the file we can use chgrp
 
 ![Screenhot of permissions](../images/screenshots/permisssions.png)
 
-## Processed and logs
+
+## Processes and logs
+
+**program:** Program are static codes/file on  disk and created by devloper.
+
+**process:** WHile process is the runninf instance of a program. It lives in RAM + OS process table. It is created by OS when program is executed.
+
+**thread:** And the thread is the light weight unit of the exwcution inside a process. THreads lives inside a  process and it is created  by the process
+
+when we execute a program the os does the folllowing things:
+
+1. Loads the prohram into RAM
+2. Assigns a process id(pid)
+3. allocates CPU, memory and file descriptions.
+4. Starts executing instructions
+
+and each process has its own:
+
+1. PID AND PPID
+2. isolatedm memory space (heap,stack,code,data)
+3. file descriptions
+4. CPU registers and program counter.
+5. Environment variables
+
+**note** two process cannot access each other's memory directly. If one crashes, the other keeps running.
+
+### View running preocesses
+
+```bash
+ps aux
+```
+
+a=allusers
+u= user oriented format
+x=include background processes
+
+**ps aux**
+![Screenhot of ps aux](../images/screenshots/psaux.png)
+
+When an application fails on a server the first two things I check are the running processes and the logs. These commands are the starting point for every debugging session.
+
+```bash
+top                       # interactive live view of processes and resource usage
+htop                      # friendlier version of top with colour and mouse support
+ps aux                    # snapshot of all running processes
+ps aux | grep nginx        # filter to find a specific process
+pgrep nginx               # get the PID of a process by name
+kill 1234                 # send termination signal to process with PID 1234
+kill -9 1234              # force kill if normal kill does not work
+```
+**ps aux | grep tivazo**
+![Screenhot of ps aux](../images/screenshots/psauxtivazo.png)
 
 
-journalctl,less, more,cat, grep , pgrep , top, df -h, du -h, free, 
+**htop**
+![Screenhot of ps aux](../images/screenshots/htop.png)
 
-## Networking
+### LOgs
 
-netstat, dig, nslookup, traceroute, curl, wget, ip addr, ip, ping, telnet
+For logs I use journalctl to read systemd service logs and grep to search through them.
+
+```bash
+journalctl -u nginx                  # logs for the nginx service
+journalctl -u nginx -f               # follow logs in real time
+journalctl --since "1 hour ago"      # logs from the last hour
+journalctl -p err                    # only error level entries
+cat /var/log/syslog                  # system log
+grep "error" /var/log/syslog         # search for error lines
+grep -i "fail" /var/log/auth.log     # case-insensitive search for login failures
+```
+
+![Screenhot of journalctl -u nginx](../images/screenshots/journalctl1.png)
+![Screenhot of journalctl -u nginx -f](../images/screenshots/journalctl2.png)
+![Screenhot of journalctl--since "1 hour ago"](../images/screenshots/journalctl3.png)
+
+**grep "error" /var/log/syslog**
+![Screenhot of df -h and du -h /var/log](../images/screenshots/dfdu.png)
 
 
+### DISK CHECKING
+
+For checking disk and memory usage:
+
+```bash
+df -h             # disk space usage for all mounted filesystems
+du -h /var/log    # size of a specific directory and its contents
+free -h           # RAM and swap usage
+```
+
+![Screenhot of df -h and du -h /var/log](../images/screenshots/dfdu.png)
+![Screenhot of free -h](../images/screenshots/free.png)
 
 ## Scheduling with cron jobs
 
-## Systemd services systemctl and jornalctl
 
 ## file searching
 
 find, grep, awk,sed, 
 
-## Archives and compression
-
-tar,gzip, zip
-
-## Disk and storage understanding
-lsblk,blkid, mount, umount df -h, du -sh
 
 ## logs dir structure
 
@@ -469,4 +543,6 @@ top
 
 - https://www.geeksforgeeks.org/linux-unix/linux-file-hierarchy-structure/
 - inode: https://www.youtube.com/watch?v=ScDv02ff8oc
+- process:  https://youtu.be/H9DAWegYpag?si=yJTWXP1FEWJHgXP0
+
  
