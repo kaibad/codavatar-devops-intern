@@ -147,6 +147,113 @@ In the FHS, all files and directories appear under the root directory /, even if
 ![Image form web: linus file system](../images/Linux_File_Hierarchy.webp)
 
 
+### Symbolic links
+
+- `/sbin -> /usr/sbin`: System binaries for administrative commands (linked to /usr/sbin)
+- `/bin  -> /usr/bin ` : Essential user binaries 
+- `/lib -> /usr/lib` : Shared libraries and kernel modules
+
+### important system Directories
+
+- `/boot` : Stores files needed for booting the system
+- `/usr` : contains most user-installed applications and libraries
+- `/var` : it stores logs, caches and temporary files 
+- `/etc` : Stores system configuration files.
+
+### temporary and volatile dir
+
+- `/tmp`: Temporary files these files will be cleared on reboot.
+- `/run`: hold runtime data for processes.
+- `/proc`: Virtual filesystem for process and system info.
+- `/sys`: virtual filesystem for hardware and kernel info.
+- `/dev`: it contains device files like /dev/nvme0n1
+
+## Links
+
+Links are the special files that point to another file or directory. They are widely used in file sharing, storage optimization, configuration management, backup systemsand ci/cd pipelines.
+
+there are two types of linnks: hard link and soft link. the soft link is also called symbolic link / symlink
+
+Before links we need to understand inodes
+
+An inode is a data structure in the linux filesystem that stores metadata about a file.
+
+there are three types of data for a file
+
+- filename, file metadata, and file content
+
+filename leads to file metadata and file meta data leads to file content.
+
+inode stores the metadata of a files like file permissions, owner & group, file size,tiimestamps, Disk block locations but it doesn't store the filename and the content of a file.
+
+file has  different types such as regular files and directory, dir are also the file types.
+
+
+![Image form web: inode](../images/screenshots/inode.png)
+
+Every file has a filename and an inode number, The filename maps to the inode and the inode maps to actuall data on disk.
+
+### Hard Links
+
+A hard link is another filename pointing to the `same inode`. Both name are completely equal, there is no "original" vs "copy"
+
+**syntac**
+
+```bash
+    ln file1 file2
+```
+
+to verify `ls -li` the number after the permissison string is the hardlink count pointing to the same inode.
+
+Even if we remove `rm file1` the file2 still survives. Data is only removes when all hard links pointing to the inode are deleted.
+
+
+#### Characterstics of the inode
+
+- the inode of new link is the same as original
+- link count is incremented with each hard link.
+- survives source deletion
+- since inode numbers are filesystem-local so hardlink cannot be created in cross filesystems.
+- the hardlinks cannot link directories
+
+we can think hardlink as A house with  two front doors, deleting one door doesn't demolish the house.
+
+![Screenhot of mkdir -p](../images/screenshots/hardlink.png)
+
+### Soft Links
+
+A softlink is a special file that stores the path to another file or directory.It doesnt references the inode directly.
+
+```bash
+    softlink.txt ------> stores path string "/home/user/file.txt"
+    
+```
+
+the inode number of each softlink is different ans hence it  consume more space than the hardlonks.
+
+#### Creating a softlink
+
+```bash
+    ln -s file1.txt sotlink.txt
+```
+
+and verify it by `ll -i`
+
+the `l` symbol at the first of the permission string denotes that it is a softlink.
+
+when the main file is deleted rm file1 then the softlink becomes dangling link, it means the symblink exists but point to nothing.
+
+#### Characterstics
+
+- the inode number is different form the original
+- it doesnt survives the source deletion
+- the soft link can be created in cross filesystem.
+- and the soft link can link directories
+
+Soft link is similar to a paper note with a house address if the house if demolished the note becmoes useless.
+
+
+![Screenhot of mkdir -p](../images/screenshots/softlink.png)
 
 
 
@@ -210,15 +317,15 @@ ls
 
 - mkdir -p devops-internship/week1/{scripts,logs,notes,backup}: this creates multipe directory in a hierarchical way.-p tells is no pareent directory create and then crete those directory so when i enter the command then if the parent directory is already present then it creates the child directoy if the parent directory is absent then it creates the parent directory first.
 
-- pwd : this command is used to preint the presetn working directory.
+- pwd : this command is used to print the presetn working directory.
 
 - tree: it display directory structure in a tree format. The tree command in Linux displays the directory structure in a hierarchical, tree-like format, providing a clear visual representation of files and subdirectories.
 
 - sudo apt update: it updates the package lists for upgrades for packages that need upgrading, as well as new packages that have just come to the repositories.   
 
-
+- stat:  display file or file system status
 ## References
 
 - https://www.geeksforgeeks.org/linux-unix/linux-file-hierarchy-structure/
-
+- inode: https://www.youtube.com/watch?v=ScDv02ff8oc
  
