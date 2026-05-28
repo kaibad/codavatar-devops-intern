@@ -543,18 +543,12 @@ ps aux | head
 top
 ```
 
-
-
 ## Screnshots
 ## task 1
 ![Screenhot of mkdir -p](../images/screenshots/create-directory.png)
 
 ## task 2
 ![Screenhot of Task 2](../images/screenshots/task2.png)
-
-## task 3
-![Screenhot of task 3](../images/screenshots/task3.png)
-
 
 
 ## Commands used for tasks and their practical meaning
@@ -576,7 +570,7 @@ top
 
 - `echo "DevOps Linux Practice" > notes/intro.txt` : echo command is used to print the content in the termnal but here the content is redireted to the notes/intro.txt . if the file is not present it create the file and write the content. similar to this `>` there is another '>>' the only difference is that `>` replaces the whole content while `>>` just append the content to the end of the file
 
-- ``cat notes/intro.txt: The cat (concatenate) command in Linux is used to view, create, and combine file contents directly from the terminal. It allows users to quickly work with file content without opening a text editor. Primarily used to display the contents of files on the terminal.It Can concatenate multiple files and display them as a single continuous output.
+- `cat notes/intro.txt`: The cat (concatenate) command in Linux is used to view, create, and combine file contents directly from the terminal. It allows users to quickly work with file content without opening a text editor. Primarily used to display the contents of files on the terminal.It Can concatenate multiple files and display them as a single continuous output.
 
 - `cp notes/intro.txt backup/intro-backup.txt`: it copies the file intro.txt from notes dir to intor-backup.txt in backup dir
 
@@ -585,6 +579,62 @@ top
 - `rm -i backup/intro-backup-copy.txt`: this commnds is used to remove or delte the intro-backup-copy.txt file and the flag -i is used to confirm before deleting.
 
 
+### Task 3: BASH SCRIPTINH
+
+This is the main script I wrote for the week. It collects system state information and is useful as a first thing to run whenever I SSH into an unfamiliar server.
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+echo "===== System Information ====="
+echo "User:              $(whoami)"
+echo "Hostname:          $(hostname)"
+echo "Date:              $(date)"
+echo "Uptime:            $(uptime -p)"
+echo ""
+echo "===== Disk Usage ====="
+df -h
+
+echo ""
+echo "===== Memory Usage ====="
+free -h
+
+echo ""
+echo "===== Top 5 Processes by CPU ====="
+ps aux --sort=-%cpu | head -6
+```
+
+![Screenhot of Task 3](../images/screenshots/bash-vim.png)
+I made it executable and ran it with tee to capture output:
+
+```bash
+chmod +x scripts/system_info.sh
+./scripts/system_info.sh | tee logs/system-info.log
+grep "User" logs/system-info.log
+```
+
+![Screenhot of Task 3](../images/screenshots/bash-exe.png)
+
+grep "User" logs/system-info.log
+![Screenhot of Task 3](../images/screenshots/bash-grep.png)
+
+
+## Problems I Ran Into
+
+When I first ran `systeminfo.sh` I got permission denied. The file existed but was not executable. chmod +x fixed it.
+
+I also had one case where set -u caught an undefined variable I had used by mistake in a script. Without that flag the script would have silently continued with an empty value and produced wrong output. This made me appreciate why those safe defaults at the top of every script matter.
+
+
+![Screenhot of Task 3](../images/screenshots/bash-problem.png)
+
+### Explanation of commands used in task 3
+
+- chmod +x scripts/system-info.sh : this commad is used to make the file name executable. by default the file is not executable. and hence we add x as exectutabel permission to execute the script.
+- ./scripts/system-info.sh | tree logs/system-info.sh : Execute the script and the tee command reads standard input and writes it to both standard output and one or more files at the same time.
+
+- grep "USer" /logs/system-info.log : it serach for the USer in the log and print the output.
 
 ## References
 
@@ -592,4 +642,13 @@ top
 - inode: https://www.youtube.com/watch?v=ScDv02ff8oc
 - process:  https://youtu.be/H9DAWegYpag?si=yJTWXP1FEWJHgXP0
 - cronjob: https://crontab.guru/
- 
+- bash script: https://www.w3schools.com/bash/bash_script.php
+- set -euo pipefail: https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+- bash cheatsheet: https://devhints.io/bash
+- environmentvariables in bash: https://opensource.com/article/19/8/what-are-environment-variables
+- constants in bash: https://bash.cyberciti.biz/guide/Create_the_constants_variable
+- logging: https://rragesh.medium.com/mastering-logging-in-bash-2-f5d83993b4e1
+- EOF in bash: https://kodekloud.com/blog/eof-bash/
+- parameters vs arguments: https://www.reddit.com/r/learnprogramming/comments/13u7xu0/difference_between_arguments_and_parameters/
+- Positional argumensts in bash: https://www.redhat.com/en/blog/arguments-options-bash-scripts
+- case statement in bash: https://linuxize.com/post/bash-case-statement/

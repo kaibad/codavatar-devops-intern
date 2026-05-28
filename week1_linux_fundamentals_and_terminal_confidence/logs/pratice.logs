@@ -1,0 +1,50 @@
+2026-05-28 08:00:01 INFO  [systemd] Starting Daily Cleanup Service...
+2026-05-28 08:00:02 INFO  [kernel] CPU0: Temperature normal at 47C
+2026-05-28 08:00:05 INFO  [nginx] Worker process started pid=1201
+2026-05-28 08:00:09 INFO  [sshd] Accepted password for admin from 192.168.1.14 port 55231
+2026-05-28 08:01:11 WARN  [auth] Failed login attempt user=root ip=203.0.113.52
+2026-05-28 08:01:13 WARN  [auth] Failed login attempt user=root ip=203.0.113.52
+2026-05-28 08:01:16 WARN  [auth] Failed login attempt user=root ip=203.0.113.52
+2026-05-28 08:01:20 ERROR [auth] User root locked after 3 failed attempts
+2026-05-28 08:02:00 INFO  [cron] Running backup.sh
+2026-05-28 08:02:04 INFO  [backup] Backup completed size=1.2GB duration=4s
+2026-05-28 08:03:11 INFO  [mysql] Connection established user=appdb
+2026-05-28 08:03:44 ERROR [mysql] Query timeout database=inventory duration=30s
+2026-05-28 08:04:12 INFO  [docker] Container started name=redis-cache
+2026-05-28 08:05:55 WARN  [kernel] Disk usage above 85% partition=/dev/sda1
+2026-05-28 08:06:03 INFO  [apt] Package lists updated
+2026-05-28 08:07:45 ERROR [nginx] 502 Bad Gateway upstream=127.0.0.1:3000
+2026-05-28 08:07:47 ERROR [nginx] 502 Bad Gateway upstream=127.0.0.1:3000
+2026-05-28 08:08:01 INFO  [systemd] Restarting node-app.service
+2026-05-28 08:08:05 INFO  [node-app] Server listening on port 3000
+2026-05-28 08:08:22 INFO  [api] GET /api/users 200 12ms
+2026-05-28 08:08:24 INFO  [api] POST /api/login 401 8ms
+2026-05-28 08:08:27 INFO  [api] POST /api/login 200 14ms
+2026-05-28 08:09:10 WARN  [memory] RAM usage exceeded 90%
+2026-05-28 08:09:42 INFO  [docker] Container stopped name=old-worker
+2026-05-28 08:10:01 INFO  [cron] Running rotate-logs.sh
+2026-05-28 08:10:02 INFO  [logrotate] Rotated /var/log/nginx/access.log
+2026-05-28 08:10:03 INFO  [logrotate] Rotated /var/log/nginx/error.log
+2026-05-28 08:10:15 ERROR [python-app] Traceback (most recent call last):
+2026-05-28 08:10:15 ERROR [python-app] File "worker.py", line 42, in process_data
+2026-05-28 08:10:15 ERROR [python-app] KeyError: 'email'
+2026-05-28 08:11:00 INFO  [sshd] Connection closed for user admin
+2026-05-28 08:11:13 WARN  [firewall] Blocked incoming connection from 45.33.32.1
+2026-05-28 08:12:21 INFO  [kubernetes] Pod restarted name=payment-api-7d9f
+2026-05-28 08:12:33 INFO  [redis] Cache miss key=session_19231
+2026-05-28 08:12:44 INFO  [redis] Cache hit key=session_19231
+2026-05-28 08:13:02 ERROR [filesystem] Read-only filesystem detected mount=/data
+2026-05-28 08:13:28 INFO  [monitoring] Healthcheck passed service=auth-api
+2026-05-28 08:14:01 WARN  [ssl] Certificate expiring in 5 days domain=example.com
+2026-05-28 08:14:55 INFO  [deploy] New release deployed version=v2.4.1
+2026-05-28 08:15:12 ERROR [deploy] Rollback triggered due to failed health checks
+2026-05-28 08:15:40 INFO  [deploy] Rollback completed version=v2.4.0
+2026-05-28 08:16:08 INFO  [systemd] Service payment-api started
+2026-05-28 08:16:44 WARN  [cpu] High CPU usage process=node-app pid=3321 cpu=97%
+2026-05-28 08:17:19 INFO  [network] Interface eth0 up speed=1Gbps
+2026-05-28 08:18:00 INFO  [cron] Running cleanup-temp.sh
+2026-05-28 08:18:04 INFO  [cleanup] Deleted 182 temporary files
+2026-05-28 08:18:44 ERROR [api] GET /api/orders 500 103ms
+2026-05-28 08:19:01 INFO  [api] GET /api/orders 200 21ms
+2026-05-28 08:19:50 WARN  [security] Suspicious activity detected ip=198.51.100.77
+2026-05-28 08:20:00 INFO  [system] Daily report generated successfully
