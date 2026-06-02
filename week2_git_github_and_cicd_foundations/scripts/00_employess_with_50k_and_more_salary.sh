@@ -14,9 +14,9 @@ set -euo pipefail
 #awk -F, '$NF>=50000 {print $0}' employee.csv
 #awk -F, '$NF>=50000 {print $2 $3 $6}' employee.csv
 
-#awk -F, '$NF>=50000 {print $2, $3, $6}' employee.csv
+awk -F, '$NF>=50000 {print $2, $3, $6}' employee.csv
 
 #awk -F, '$NF>=50000 {print $2 "\t" $3 "\t" $6}' employee.csv
 
-awk -F, 'BEGIN{OFS=" | "} $NF>=50000 {print $2, $3, $6}' employee.csv
+#awk -F, 'BEGIN{OFS=" | "} $NF>=50000 {print $2, $3, $6}' employee.csv
 
