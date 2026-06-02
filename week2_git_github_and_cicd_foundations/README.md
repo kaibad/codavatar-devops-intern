@@ -356,7 +356,6 @@ git pull --rebase
 
 **What `-u` does:** Sets the upstream tracking. After `git push -u origin main`, Git knows that `origin/main` is the remote counterpart of your local `main`. Future `git push` and `git pull` will automatically use this connection.
 
-#### Cloning
 
 ```bash
 # Clone a repository (downloads full history)
@@ -368,9 +367,530 @@ git clone git@github.com:USERNAME/repo-name.git my-folder
 # Clone only the latest commit (shallow clone — faster for large repos)
 git clone --depth=1 git@github.com:USERNAME/repo-name.git
 ```
+---
+
+### Merge Conflicts
+
+A merge conflict happens when two branches changed the same line of a file differently.
+
+**Example:**
+```
+Branch main:    "Server running on port 3000"
+Branch feature: "Server running on port 8080"
+```
+Git cannot decide which one is correct — you must resolve it manually.
+
+**What a conflict looks like in the file:**
+
+```
+<<<<<<< HEAD
+Server running on port 3000
+=======
+Server running on port 8080
+>>>>>>> feature-branch
+```
+**How to read it**
+
+- HEAD = the version from the branch you were on when you started the merge (likely main)
+- feature = the version from the feature branch
+
+Now you must decide which behavior you want.
+
+**How to resolve:**
+
+1. Open the conflicted file in VS Code or any mergetool
+2. Delete the conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
+3. Keep the correct code (or combine both)
+4. Save the file
+5. Stage and commit the resolution
+
+```bash
+# After resolving all conflicts:
+git add conflicted-file.txt
+git commit -m "fix: resolve merge conflict in server port"
+```
+---
+
+**VS Code makes this easier** — it shows a UI with buttons: Accept Current Change, Accept Incoming Change, Accept Both.
+
+
+![Screenshot of git merge](../images/screenshots/week2/merge-conflict.png)
+![Screenshot of git merge](../images/screenshots/week2/merge-conflict-2.png)
+![Screenshot of git merge](../images/screenshots/week2/merge-editor.png)
+![Screenshot of git merge](../images/screenshots/week2/merge-conflict-removed.png)
 
 ---
 
+### Git Log and History
+
+```bash
+# View full commit history
+git log
+
+# Compact one-line view
+git log --oneline
+
+# Last 5 commits
+git log --oneline --max-count=5
+
+# Graphical branch view in terminal
+git log --oneline --graph --all
+
+# Show what changed in each commit
+git log -p
+
+# Search commits by message
+git log --grep="feat"
+
+# Show who changed each line of a file
+git blame filename.txt
+
+# Show changes in a specific commit
+git show commit-hash
+```
+---
+
+![Screenshot of git log](../images/screenshots/week2/git-log.png)
+![Screenshot of git log](../images/screenshots/week2/git-log-2.png)
+![Screenshot of git log](../images/screenshots/week2/git-log-3.png)
+
+---
+### Undoing Changes
+
+```bash
+# Discard changes in working directory (CANNOT be undone)
+git checkout -- filename.txt
+# Modern syntax:
+git restore filename.txt
+
+# Unstage a file (keeps changes in working directory)
+git reset HEAD filename.txt
+# Modern syntax:
+git restore --staged filename.txt
+
+# Undo last commit but keep changes staged
+git reset --soft HEAD~1
+
+# Undo last commit and unstage changes (keep files modified)
+git reset --mixed HEAD~1
+
+# Undo last commit and DELETE all changes (DANGEROUS)
+git reset --hard HEAD~1
+
+# Create a new commit that reverses a previous commit (safe for shared branches)
+git revert commit-hash
+```
+
+> **Rule:** Never use `git reset --hard` or force-push on shared branches. It rewrites history and breaks everyone else's work.
+
+---
+
+### git stash
+
+`git stash` temporarily saves your uncommitted work so you can switch branches or do something else, then come back and restore it.
+
+**The problem it solves:** You are halfway through work on `feature-branch` and need to urgently switch to `main` to fix a bug. You cannot commit half-done work. `git stash` saves it temporarily.
+
+```bash
+# Stash current changes (working dir + staged)
+git stash
+
+# Stash with a descriptive name
+git stash push -m "half-done login form"
+
+# Stash including untracked files (new files not yet added)
+git stash push --include-untracked
+
+# List all stashes
+git stash list
+# stash@{0}: On feature-branch: half-done login form
+# stash@{1}: WIP on main: a1b2c3 fix typo
+
+# Apply the most recent stash (keeps stash in list)
+git stash apply
+
+# Apply a specific stash
+git stash apply stash@{1}
+
+# Apply most recent stash AND remove it from list
+git stash pop
+
+# Remove a specific stash without applying
+git stash drop stash@{0}
+
+# Remove all stashes
+git stash clear
+
+# Show what is in the most recent stash
+git stash show
+
+# Show full diff of a stash
+git stash show -p stash@{0}
+```
+
+**Typical stash workflow:**
+
+```bash
+# You are on feature-branch with unsaved work
+git stash push -m "WIP: login validation"
+
+# Switch to fix urgent bug on main
+git checkout main
+# ... fix the bug, commit, push ...
+
+# Return to your feature
+git checkout feature-branch
+git stash pop
+# Your work is restored exactly as you left it
+```
+
+---
+
+### git cherry-pick
+
+`git cherry-pick` copies a specific commit from one branch and applies it to your current branch. You pick one commit and "cherry-pick" just that change.
+
+```bash
+# Apply a specific commit to current branch
+git cherry-pick a1b2c3
+
+# Cherry-pick multiple commits
+git cherry-pick a1b2c3 d4e5f6
+
+# Cherry-pick a range of commits
+git cherry-pick a1b2c3..g7h8i9
+
+# Cherry-pick without committing (apply changes but don't commit yet)
+git cherry-pick --no-commit a1b2c3
+
+# If a conflict occurs during cherry-pick:
+# 1. Resolve the conflict
+git add resolved-file.txt
+# 2. Continue
+git cherry-pick --continue
+# Or abort
+git cherry-pick --abort
+```
+
+**When to use cherry-pick:**
+
+**Situation:** A bug fix is on a feature branch but needs to go to main immediately . **example:** Pick just the fix commit onto main
+
+**situation** You accidentally committed to the wrong branch **example** Cherry-pick it to the right branch, then drop it from wrong one
+
+**situation**  You need one specific feature from an old branch **example**  Pick just that commit
+
+```bash
+# Example: bug fix on feature branch needs to go to main
+git log feature-branch --oneline
+# a1b2c3 fix: critical security patch   ← you want this
+# d4e5f6 feat: half-done feature
+
+git checkout main
+git cherry-pick a1b2c3
+# The fix is now on main without bringing the unfinished feature
+```
+
+---
+
+### git diff
+
+`git diff` shows exactly what changed between files, commits, or branches.
+
+```bash
+# Show unstaged changes (working dir vs staging area)
+git diff
+
+# Show staged changes (staging area vs last commit)
+git diff --staged
+# Also written as:
+git diff --cached
+
+# Show changes between two commits
+git diff a1b2c3 d4e5f6
+
+# Show changes between two branches
+git diff main feature-branch
+
+# Show changes in a specific file only
+git diff filename.txt
+
+# Show only file names that changed (no content)
+git diff --name-only
+
+# Show summary of how many lines changed per file
+git diff --stat
+
+# Show changes between local and remote main
+git diff main origin/main
+
+# Show difference between last commit and 2 commits ago
+git diff HEAD HEAD~2
+```
+
+**Reading diff output:**
+
+```diff
+--- a/scripts/system_info.sh     ← original file
++++ b/scripts/system_info.sh     ← modified file
+@@ -3,7 +3,8 @@                  ← line numbers affected
+ echo "User: $(whoami)"
+-echo "Date: $(date)"            ← removed line (red)
++echo "Date: $(date '+%Y-%m-%d')"← added line (green)
++echo "Uptime: $(uptime -p)"     ← new line added (green)
+ echo "Current directory: $(pwd)"
+```
+
+Lines starting with `-` were removed. Lines starting with `+` were added. Lines with no prefix are context (unchanged).
+
+---
+
+### git tag
+
+Tags mark specific commits as important — usually version releases. Unlike branches, tags do not move.
+
+```bash
+# Create a lightweight tag on current commit
+git tag v1.0.0
+
+# Create an annotated tag (recommended — stores tagger, date, message)
+git tag -a v1.0.0 -m "Release version 1.0.0 - Week 2 complete"
+
+# Tag a specific commit (not current)
+git tag -a v0.9.0 a1b2c3 -m "Beta release"
+
+# List all tags
+git tag
+
+# List tags matching a pattern
+git tag -l "v1.*"
+
+# Show tag details and the commit it points to
+git show v1.0.0
+
+# Push a specific tag to remote
+git push origin v1.0.0
+
+# Push all tags to remote
+git push origin --tags
+
+# Delete a local tag
+git tag -d v1.0.0
+
+# Delete a remote tag
+git push origin --delete v1.0.0
+
+# Checkout code at a specific tag (detached HEAD state)
+git checkout v1.0.0
+```
+
+**Semantic versioning (SemVer) — standard tag naming:**
+
+```
+v MAJOR . MINOR . PATCH
+v  1   .   2   .   3
+
+MAJOR: Breaking changes (not backward compatible)
+MINOR → New features (backward compatible)
+PATCH → Bug fixes only
+```
+
+Examples: `v1.0.0`, `v2.3.1`, `v0.9.0-beta`, `v1.0.0-rc1`
+
+![Screenshot of git tag](../images/screenshots/week2/git-tag.png)
+---
+## GitHub
+
+GitHub is a cloud platform for hosting Git repositories. It adds collaboration features: pull requests, issues, code review, Actions (CI/CD), and more.
+
+### Setting Up SSH Key Authentication
+
+GitHub no longer accepts passwords for Git operations. You must use SSH keys or personal access tokens.
+
+**SSH key = a pair of keys:**
+- **Private key**  stays on your machine, never shared
+- **Public key**  uploaded to GitHub
+
+When you push, GitHub verifies you have the private key that matches the public key on record.
+
+```bash
+# Step 1: Generate SSH key pair
+ssh-keygen -t ed25519 -C "your-email@example.com"
+# Press Enter to accept default location (~/.ssh/id_ed25519)
+# Set a passphrase (optional but recommended)
+
+# Step 2: Start the SSH agent
+eval "$(ssh-agent -s)"
+
+# Step 3: Add private key to the agent
+ssh-add ~/.ssh/id_ed25519
+
+# Step 4: Copy public key to clipboard
+cat ~/.ssh/id_ed25519.pub
+# Copy the entire output
+
+# Step 5: Add to GitHub
+# Go to: GitHub → Settings → SSH and GPG keys → New SSH key
+# Paste the public key and give it a title like "WSL Ubuntu" or "MacBook"
+
+# Step 6: Test the connection
+ssh -T git@github.com
+# Expected output: "Hi USERNAME! You've successfully authenticated..."
+```
+
+---
+
+### GitHub CLI (gh)
+
+The GitHub CLI lets you manage GitHub directly from your terminal — create repos, open PRs, view issues — without opening the browser.
+
+```bash
+# Install on Ubuntu/WSL
+sudo snap install gh
+# OR
+sudo apt install gh
+
+# Install on macOS
+brew install gh
+
+# Login
+gh auth login
+# Choose: GitHub.com → SSH → browser login
+
+# Check authentication
+gh auth status
+```
+
+**Useful gh commands:**
+
+```bash
+# Create a new repository
+gh repo create devops-internship-labs --public
+
+# Clone a repository
+gh repo clone USERNAME/repo-name
+
+# View open pull requests
+gh pr list
+
+# Create a pull request
+gh pr create --title "Week 2 CI/CD setup" --body "Added GitHub Actions workflow"
+
+# Merge a pull request
+gh pr merge 1
+
+# View issues
+gh issue list
+
+# Create an issue
+gh issue create --title "Fix login bug" --body "Login fails on mobile"
+```
+
+---
+
+### GitHub Repository Setup
+
+```bash
+# Option A: Create on GitHub first, then clone
+gh repo create devops-internship-labs --public --clone
+cd devops-internship-labs
+
+# Option B: Initialize locally and push to GitHub
+cd ~/devops-internship
+git init
+git add .
+git commit -m "chore: initial commit with week1 linux work"
+git branch -M main
+git remote add origin git@github.com:YOUR_USERNAME/devops-internship-labs.git
+git push -u origin main
+```
+---
+
+### Pull Request Workflow
+
+A **Pull Request (PR)** is a request to merge your branch into another branch (usually `main`). It is the central place for code review in professional teams.
+
+**Standard PR workflow:**
+
+```
+1. Create branch         git checkout -b week2-git-cicd
+2. Make changes          edit files, write code
+3. Commit changes        git add . && git commit -m "..."
+4. Push branch           git push -u origin week2-git-cicd
+5. Open PR on GitHub     Compare & pull request button
+6. CI checks run         GitHub Actions validates the code
+7. Code review           Teammates leave comments
+8. Address feedback      Make more commits on same branch
+9. Merge PR              Squash and merge or merge commit
+10. Delete branch        Clean up after merge
+```
+
+**Creating a PR from terminal:**
+
+```bash
+gh pr create \
+  --title "ci: add github actions basic check workflow" \
+  --body "Adds a workflow that runs on push and PR to validate shell scripts and show repo files. Closes #1"
+```
+
+**PR description best practices:**
+- What does this PR do?
+- Why was this change needed?
+- How was it tested?
+- Screenshots if UI changed
+- Link to related issue: `Closes #issue-number`
+
+---
+
+### GitHub Best Practices
+
+**Branch naming:**
+```
+week2-git-cicd
+feature/user-login
+fix/docker-port-conflict
+chore/update-dependencies
+```
+
+**What NOT to commit:**
+- Passwords, API keys, tokens, secrets
+- `.env` files with real credentials
+- `node_modules/`, `__pycache__/`, build artifacts
+- Large binary files
+
+**Use `.gitignore`:**
+
+```bash
+cat > .gitignore <<'EOF'
+# Environment files
+.env
+.env.local
+.env.production
+
+# Dependency folders
+node_modules/
+__pycache__/
+*.pyc
+
+# Build output
+dist/
+build/
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+EOF
+
+git add .gitignore
+git commit -m "chore: add gitignore"
+```
+
+---
 
 ## References
 
