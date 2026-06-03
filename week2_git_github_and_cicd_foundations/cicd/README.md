@@ -436,10 +436,54 @@ YAML is indentation-based. Wrong indentation breaks the workflow.
     echo "Line 2"
     ls -la
 
+```
+
+GitHub Actions workflows are written in YAML under .github/workflows. Interns must understand indentation, triggers,
+jobs, steps, and actions.
+
+## CICD TASK
+
+1. git checkout -b week2-cicd
+2. wrote the yaml file
+```yaml
+name: Basic DevOps check
+
+on:
+  push:
+    branches: [week2-cicd]
+    tags:
+      - 'v*'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show repository files
+        run: ls -la
+
+      - name: Show current directory
+        run: pwd
+
+      - name: Check shell script syntax
+        run: bash -n week1_linux_fundamentals_and_terminal_confidence/scripts/system_info.sh
+
+      - name: Print environment info
+        run: |
+          echo "Runner Os: $RUNNER_OS"
+          echo "GITHUB ACTOR: $GITHUB_ACTOR"
+          echo "BRANCH: $GITHUB_REF_NAME"
+          echo "Commit SHA: $GITHUB_SHA"
 
 ```
 
+3. add to git
 
+![github actions ci](../../images/screenshots/week2/ci-success.png)
+
+![github actions ci](../../images/screenshots/week2/ci-log.png)
 
 
 # References
