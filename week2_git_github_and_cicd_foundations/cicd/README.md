@@ -411,6 +411,35 @@ Build -> Test -> Manager Approval -> Production
 
 ```
 
+## YAML
+
+YAML is a human-friendly data serialization language for all programming languages.
+
+Yet another markup language.
+
+YAML Ain't Markup Language
+
+### YAML Syntax for Workflows
+
+YAML is indentation-based. Wrong indentation breaks the workflow.
+
+**Rules:**
+- Use 2 spaces for each indentation level (not tabs)
+- Keys and values are separated by `: `
+- Lists use `- ` prefix
+- Strings with special characters need quotes
+
+```yaml
+- name: Multiple commands
+  run: |
+    echo "Line 1"
+    echo "Line 2"
+    ls -la
+
+
+```
+
+
 
 
 # References
@@ -421,4 +450,6 @@ Build -> Test -> Manager Approval -> Production
 - https://www.geeksforgeeks.org/devops/deployment-strategies-in-aws/
 - https://hokstadconsulting.com/blog/rollback-automation-best-practices-for-ci-cd
 - https://medium.com/@surajpatil141998/rollback-strategies-in-devops-ensuring-safer-deployments-a469243288ac
-
+- YAML: https://youtu.be/AEwty5sXCm4?si=X_l_hSnGF6NO--n, https://www.youtube.com/watch?v=NaoMEy_urlI_
+- YAML: https://yaml.org/
+- YAML: https://play.yaml.com/?show=JlpUgfxrsSdLnPhH#

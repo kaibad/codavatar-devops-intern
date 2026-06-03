@@ -1,0 +1,2 @@
+before 1:30: scm, git, github
+after 1:30 :troubleshooting in linux
