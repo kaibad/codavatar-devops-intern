@@ -436,8 +436,10 @@ YAML is indentation-based. Wrong indentation breaks the workflow.
     echo "Line 2"
     ls -la
 
-
 ```
+
+GitHub Actions workflows are written in YAML under .github/workflows. Interns must understand indentation, triggers,
+jobs, steps, and actions.
 
 
 

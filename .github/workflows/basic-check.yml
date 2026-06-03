@@ -1,0 +1,31 @@
+name: Basic DevOps check
+
+on:
+  push:
+    branches: [week2-cicd]
+    tags:
+      - 'v*'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show repository files
+        run: ls -la
+
+      - name: Show current directory
+        run: pwd
+
+      - name: Check shell script syntax
+        run: bash -n week1_linux_fundamentals_and_terminal_confidence/scripts/system_info.sh
+
+      - name: Print environment info
+        run: |
+          echo "Runner Os: $RUNNER_OS"
+          echo "GITHUB ACTOR: $GITHUB_ACTOR"
+          echo "BRANCH: $GITHUB_REF_NAME"
+          echo "Commit SHA: $GITHUB_SHA"
+
