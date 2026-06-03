@@ -109,15 +109,316 @@ Commont artifacts types are:
 - Archive --> .zip,.tar.gz --> s3, GC3, Azure blob
 - Helm chart --> kubernetes deployement package ---> helm repo OCI registry
 
+## Testing in CI/CD
+
+Testing is the heart of CI . The test pyramid guides how test should be distributed.
+
+```bash
+        ▲
+        |   End-to-End (fewest, slowest)
+        |
+        |   Integration (moderate amount, balanced)
+        |
+        |   Unit Tests (largest base, fastest)
+        ▼
+```
+## GitHub Actions Terms
+
+**Workflow** The entire automation process. It is stored in `.github/workflows/`. A workflow is roughly equivalent to a Jenkins pipeline.
+
+**Event (Trigger)** It deterines when the pipeline runs. 
+
+```yaml
+on:
+  push:
+  pull_request:
+```
+
+**job** A major unit of work inside a workflow.
+
+```yaml
+jobs:
+  build:
+  test:
+  deploy:
+```
+
+Jobs are conceptually similar to Jenkins stages, although they run on separate runners by default.
+
+**steos** Individual tasks inside a job. 
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+
+  - run: npm install
+
+  - run: npm test
+```
+Equivalent to Jenkins steps.
 
 
+**Actions**: Reusable components. we can think of the actions as the reusable plugin/tasks. We can use these actions from the github action marketplace
 
 
+```yaml
+- uses: actions/checkout@v4
+```
 
+**Needs** It defines job dependency.
+
+```yaml
+jobs:
+  test:
+    needs: build
+
+```
+
+It means the test job starts only after build succeeds.
+
+**Environment Variable** THE env var is  the gh actions can be defined and used as:
+
+```yaml
+
+env:
+  APP_NAME: my-app
+
+# usage
+
+- run: echo $APP_NAME
+
+```
+
+**secrets** Securely store the passwords, token, api keys, ssh. Stored in repository settings.
+
+```yaml
+${{ secrets.DOCKER_PASSWORD }}
+```
+
+**Artifacts** File saved after workflow execution. Common artifacts are Build artifacts, reports, test results.
+
+
+## Pipeline as a code
+Pipeline as a code is a practice of defining deployment pipeline through source code, such as git. Pipeline as code is part of a larger "as code" movement that includes infra as code.
+
+## Useful terms in jenkins
+
+**Stage**
+
+A logical phase of  the pipeline is stage.
+
+```groovy
+    stage('Build')
+```
+Stages help visualize progress in Jenkins UI.
+
+**steps**
+
+Individual commands executed inside a stage.
+
+```groovy
+steps {
+    sh 'mvn clean package'
+}
+```
+A stage contains one or more steps.
+
+***Node***
+A Jenkins machine capable of running jobs.types: controller node and worker node
+
+
+***Workspace***
+
+Directory where Jenkins checks out source code and executes builds.
+
+```bash
+/var/lib/jenkins/workspace/my-project
+
+```
+
+**Post Actions**
+
+Actions executed after stages complete.
+
+```groovy
+post {
+    success {
+        echo 'Build succeeded'
+    }
+
+    failure {
+        echo 'Build failed'
+    }
+}
+```
+it is useful for notifications, cleanup, publishing reports.
+
+
+**Environment Variables**
+
+Pipeline-wide variables
+
+```groovy
+environment {
+    APP_NAME = 'my-app'
+}
+# usage
+
+echo "${APP_NAME}"
+```
+**Credentials**
+
+Secure storage for: passwords, API keys, SSH keys,  and tokens
+
+```groovy
+withCredentials(...) {
+   ...
+}
+```
+
+## Parallel execution of the pipeline
+
+Both the gh actions and jenkins can run simultaneously but they do it differently.
+
+**jenkins** In jenkins multiple branches can run simultaneously using the parallel block.
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Tests') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        sh 'npm run test:unit'
+                    }
+                }
+
+                stage('Integration Tests') {
+                    steps {
+                        sh 'npm run test:integration'
+                    }
+                }
+
+                stage('UI Tests') {
+                    steps {
+                        sh 'npm run test:ui'
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**GH actions** in gh actions jobs run in parallel by default unless we specify dependencies with needs. 
+
+
+## Matrix stretegy in GH actions
+
+GitHub Actions has a powerful feature called matrix builds, which automatically creates parallel jobs.
+
+this is widely used for multiple os versions, multiple language verisons, multiple environments.
+
+**example**
+
+``` yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - run: echo ${{ matrix.node-version }}
+
+```
+
+in this example the test job will run on all three version of the node simultaneously.
+
+
+## Deployment strategies
+
+Deployment strategies in DevOps are important for managing application updates with minimal disturbance to users. Choosing the right deployment strategy is key for managing costs and reducing risks. These strategies are really helpful in reducing risks, optimizing resource use, and providing efficient transitions when deploying new versions of applications.
+
+![Deployment strategies in devops](https://media.geeksforgeeks.org/wp-content/uploads/20250805145640991961/deployment_strategies_on_aws.webp)
+
+**Rolling Deployment**
+
+Old Pods -> Gradually Replaced
+
+Minimal downtime.
+
+```bash
+v1 v1 v1 v1
+v2 v1 v1 v1
+v2 v2 v1 v1
+v2 v2 v2 v1
+v2 v2 v2 v2
+
+```
+
+**Blue-Green Deployment**
+
+Blue  = Current Version
+Green = New Version
+
+Switch traffic after validation.
+```
+Users ->  Blue
+
+Deploy Green
+
+Switch -> Green
+
+```
+**Canary Deployment**
+
+Release to a small percentage first.
+
+5% Users -> New Version
+
+95% Users -> Old Version
+
+Then increase gradually.
+
+
+## Roll back
+
+Rollback strategies in CI/CD pipelines are essential safety mechanisms that automatically or manually revert applications to a stable state when deployments fail or introduce critical errors.  These strategies minimize downtime, protect user experience, and maintain system reliability by ensuring rapid recovery from failed updates. 
+
+**What if deployment fails?**
+
+```bash
+Version 1.0 -> Deploy 1.1 -> Issue Found -> Rollback to 1.0
+
+```
+
+A mature CI/CD system always has a rollback strategy.
+
+Rollback strategies are not just safety mechanisms; they are core components of resilient systems. As DevOps engineers, our goal is not just to deploy fast, but to deploy safely and smartly. Rollbacks empower teams to take bold steps forward — knowing there’s a reliable way back if something goes wrong.
+
+
+## Approval Gates
+
+Approval gates in CI/CD aren’t bureaucratic overhead — they implement specific compliance controls:
+
+```bash
+Build -> Test -> Manager Approval -> Production
+
+```
 
 
 
 # References
 - https://www.eficode.com/blog/have-you-closed-the-devops-infinity-loop-after-deploy
 - https://about.gitlab.com/topics/ci-cd/pipeline-as-code/
-- 
+- https://testomat.io/blog/testing-pyramid-role-in-modern-software-testing-strategies/
+- https://billyokeyo.dev/posts/testing-pyramid/
+- https://www.geeksforgeeks.org/devops/deployment-strategies-in-aws/
+- https://hokstadconsulting.com/blog/rollback-automation-best-practices-for-ci-cd
+- https://medium.com/@surajpatil141998/rollback-strategies-in-devops-ensuring-safer-deployments-a469243288ac
+
