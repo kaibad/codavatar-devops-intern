@@ -1,0 +1,38 @@
+===user service error ====
+
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.
+
+docker compose build --no-cache user-service
+docker compose up -d2
+
+
+=== ticket service error =====
+
+
+passlib==1.7.4
+bcrypt==4.2.0
+
+the bcrypt verison is creating a mess here
+
+the user in not logging in or registeirng .
+i changethe veriosn of the pass lib ans bcypt then use service works but ticketin is not working
+
+overall the appliationshould be fast and working.
+ad while booking the user should be able to select multiple seats.
+
+use these color pallete 
+Ocean Blue Serenity
+Dive into endless aquatic tranquility: deep indigo to crystal sky-bleu, calm yet exhilarating layers.
+
+admin shoulnt be registred via register form we will add admin directly into database
+
+font should be more visible in the ui 
+
+for live matches booking should be closed
+
+the seat selection box is llke a movie sea make it like a stadium
+
+for font use roboto
+
+use rabbit mq as well
