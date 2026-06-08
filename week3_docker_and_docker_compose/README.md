@@ -92,7 +92,7 @@ Docker allows developers to package an application along with all its dependenci
 
 ### Docker Architecture
 
-![DOcker architecture](https://www.aquasec.com/wp-content/uploads/2023/11/WIKI-Malware-Detection-AA0723-4-_Recovered_-1024x634.png)
+![DOcker architecture](https://media.geeksforgeeks.org/wp-content/uploads/20251218122638607429/docker_host.webp)
 
 Docker uses a client–server architecture. The Docker client talks to the Docker Daemon, which builds, runs, and manages containers. They communicate through a REST API via UNIX sockets or a network interface.
 
