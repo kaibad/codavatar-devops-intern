@@ -376,8 +376,18 @@ docker compose logs
 
 docker compose up --force-recreate
 
-```
+======================
+docker system commands
+======================
+docker system df	#Show docker disk usage
+docker system events	#Get real time events from the server
+docker system info	#Display system-wide information
+docker system prune	#Remove unused data
 
+docker stats # display the stats of the docker resource
+
+
+```
 
 # REFERENCES
 
@@ -390,3 +400,4 @@ docker compose up --force-recreate
 - https://www.mygreatlearning.com/blog/top-essential-docker-commands/
 - https://www.geeksforgeeks.org/devops/docker-compose/
 - https://docs.docker.com/compose/how-tos/networking/
+- https://docs.docker.com/reference/cli/docker/system/
