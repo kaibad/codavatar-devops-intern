@@ -1,0 +1,50 @@
+# Questions That May Arise During Review / Interview
+
+1. Are Kubernetes Secrets really secure?
+
+   * RBAC
+   * Encryption at Rest
+   * AWS Secrets Manager
+   * HashiCorp Vault
+
+2. What Kubernetes troubleshooting scenarios have you faced?
+
+3. Why do we need Ingress when Services already exist?
+
+4. Why do we need Helm Charts?
+
+5. If a ConfigMap changes, do Pods need to be restarted?
+
+   * Why?
+   * How can this be automated?
+
+6. How does Terraform rollback work?
+
+7. How do you secure Terraform credentials?
+
+8. Why use GitOps with ArgoCD?
+
+9. Why use MicroK8s instead of EKS for this project?
+
+10. How do you implement Blue-Green deployments in Kubernetes?
+
+11. How do you monitor Kubernetes clusters?
+
+12. How do you implement AIOps for monitoring and alerting?
+
+13. How do you handle scaling beyond the defined threshold?
+
+14. Why are resource requests and limits important?
+
+15. Why use Service Accounts and RBAC together?
+
+16. How do you prevent configuration drift?
+
+17. What happens if Terraform state gets corrupted?
+
+18. Why use a remote backend instead of a local state file?
+
+19. How do you secure secrets in CI/CD pipelines?
+
+20. How do you perform disaster recovery for this platform?
+

@@ -1,0 +1,111 @@
+# DevOps Project Requirements
+
+1. Blue-Green Deployment in Kubernetes
+
+2. Secure CI/CD Pipeline
+
+3. Use self-managed Kubernetes (MicroK8s preferred over EKS)
+
+4. Frontend Deployment:
+
+   * Amazon S3
+
+5. Backend Deployment:
+
+   * EC2
+
+6. Database:
+
+   * PostgreSQL/MySQL on EC2 OR
+   * Amazon RDS
+
+7. Implement Least Privilege Access
+
+8. End-to-End Automation
+
+9. Kubernetes Best Practices:
+
+   * Resource Requests and Limits
+   * ConfigMaps
+   * Secrets
+   * HashiCorp Vault / AWS Secrets Manager
+   * Cluster Monitoring
+   * Logging
+   * Observability
+
+10. AIOps for Monitoring and Alerting
+
+11. Auto Scaling:
+
+* Scale up to 5 Pods
+* Scale up to 5 Nodes
+* Alert via Slack and/or Email if scaling exceeds threshold
+
+12. Security:
+
+* RBAC
+* IAM Roles
+* Service Accounts
+
+13. Ingress Controller
+
+14. Kubernetes Tools:
+
+* Helm
+* ArgoCD
+
+15. Kubernetes Health Checks:
+
+* Liveness Probe
+* Readiness Probe
+* Startup Probe
+
+16. Terraform for Infrastructure Provisioning:
+
+* VPC
+* Subnets
+* Security Groups
+* EC2
+* S3
+* RDS (Optional)
+* Kubernetes resources managed manually
+
+17. GitHub as Single Source of Truth:
+
+* Application Code
+* Terraform Code
+* Helm Charts
+* Dockerfiles
+* Kubernetes Manifests
+* CI/CD Pipelines
+* Documentation
+
+18. Terraform Remote Backend:
+
+* S3 Backend
+* DynamoDB State Locking
+
+19. Terraform CI/CD Pipeline:
+
+* Git Push
+* terraform fmt
+* terraform validate
+* Security Scan (Checkov/tfsec)
+* terraform plan
+* Approval (Optional)
+* terraform apply
+* Update Remote State
+
+20. Terraform State File Security:
+
+* No Secrets in State File
+* Encrypt Backend
+* Restricted Access
+
+21. Infrastructure Automation:
+
+* 100% Automated Infrastructure Deployment
+* Secure Credential Management
+* No Hardcoded Secrets
+* IAM Roles / OIDC Authentication
+
