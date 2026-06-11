@@ -18,6 +18,7 @@
 
    * PostgreSQL/MySQL on EC2 OR
    * Amazon RDS
+   * Database Backups
 
 7. Implement Least Privilege Access
 
@@ -32,6 +33,13 @@
    * Cluster Monitoring
    * Logging
    * Observability
+   * Namespace Separation (dev, staging, prod)
+   * Persistent Volumes (PV)
+   * Persistent Volume Claims (PVC)
+   * Rolling Update Strategy
+   * Blue-Green Deployment Strategy
+   * Non-Root Containers
+   * Read-Only Filesystem (where applicable)
 
 10. AIOps for Monitoring and Alerting
 
@@ -46,6 +54,9 @@
 * RBAC
 * IAM Roles
 * Service Accounts
+* GitHub OIDC Authentication
+* Container Image Scanning (Trivy)
+* Base Image Hardening
 
 13. Ingress Controller
 
@@ -63,11 +74,14 @@
 16. Terraform for Infrastructure Provisioning:
 
 * VPC
-* Subnets
+* Public Subnets
+* Private Subnets
+* Route Tables
 * Security Groups
 * EC2
 * S3
 * RDS (Optional)
+* Bastion Host (or VPN Access)
 * Kubernetes resources managed manually
 
 17. GitHub as Single Source of Truth:
@@ -87,25 +101,45 @@
 
 19. Terraform CI/CD Pipeline:
 
-* Git Push
+* Pull Request Validation Pipeline
+* Branch Protection Rules
 * terraform fmt
 * terraform validate
 * Security Scan (Checkov/tfsec)
 * terraform plan
-* Approval (Optional)
+* Manual Approval (Production)
 * terraform apply
 * Update Remote State
 
-20. Terraform State File Security:
+20. Environment Strategy:
+
+* Development
+* Staging
+* Production
+
+21. Terraform State File Security:
 
 * No Secrets in State File
 * Encrypt Backend
 * Restricted Access
 
-21. Infrastructure Automation:
+22. Infrastructure Automation:
 
-* 100% Automated Infrastructure Deployment
+* No nedd to 100% automate the infra but 
 * Secure Credential Management
 * No Hardcoded Secrets
-* IAM Roles / OIDC Authentication
+* IAM Roles / GitHub OIDC Authentication
+
+23. Storage & Recovery:
+
+* S3 Versioning
+* Database Backup Strategy
+
+24. Documentation:
+
+* Architecture Diagram
+* CI/CD Flow Diagram
+* Deployment Guide
+* Troubleshooting Guide
+* Runbook
 
