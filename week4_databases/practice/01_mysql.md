@@ -4,19 +4,316 @@
 
 ## Setup
 1. Pull and run MySQL 8.4 using Docker with a named volume and root password, exposed on port 3306.
+
+```bash
+docker run -itd --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v mysql-data:/var/lib/mysql mysql:8.4
+```
+
 2. Shell into the running container and connect to MySQL as root.
+
+```bash
+docker exec -it mysql /bin/bash
+
+mysql -u root -p # login to mysql shell without the trace of passowrd in the history
+
+```
 3. Create a database called `company_db` and switch to it.
 
+```bash
+mysql> CREATE DATABASE company_db;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> show dbs
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'dbs' at line 1
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| company_db         |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.03 sec)
+
+mysql> use company_db;
+Database changed
+mysql> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| company_db |
++------------+
+1 row in set (0.01 sec)
+
+mysql> 
+
+```
+**NOte:** use ctrl + l to clear the mysql shell
 ---
 
 ## DDL
 4. Create a `department` table with columns: `dept_id` (PK, auto increment), `dept_name` (unique, not null), `location`, `budget` (decimal, default 0).
+
+**syntax**
+```bash
+CREATE TABLE table_name (
+    column1 datatype constraint,
+    column2 datatype constraint,
+    column3 datatype constraint,
+   ....
+);
+
+```
+
+```bash
+mysql> CREATE TABLE department ()
+    -> ^C
+mysql> CREATE TABLE department (dept_id INT NOT NULL AUTO_INCREMENT , dept_name VARCHAR(50) NOT NULL UNIQUE, location VARCHAR(50), budget DECIMAL(15,2) DEFAULT 0, PRIMARY KEY(dept_id))
+    -> ;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> SHOW TABLESL
+    -> ^C
+mysql> SHOW TABLES;
++----------------------+
+| Tables_in_company_db |
++----------------------+
+| department           |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM department;
+Empty set (0.02 sec)
+
+mysql> DESCRIBE department;
++-----------+---------------+------+-----+---------+----------------+
+| Field     | Type          | Null | Key | Default | Extra          |
++-----------+---------------+------+-----+---------+----------------+
+| dept_id   | int           | NO   | PRI | NULL    | auto_increment |
+| dept_name | varchar(50)   | NO   | UNI | NULL    |                |
+| location  | varchar(50)   | YES  |     | NULL    |                |
+| budget    | decimal(15,2) | YES  |     | 0.00    |                |
++-----------+---------------+------+-----+---------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> 
+
+```
+
 5. Create an `employee` table with: `emp_id` (PK), `first_name`, `last_name`, `email` (unique), `salary`, `dept_id` (FK to department), `manager_id` (self-referencing FK), `hire_date`, `is_active` (boolean, default true).
+
+```bash
+mysql> show tables;
++----------------------+
+| Tables_in_company_db |
++----------------------+
+| department           |
++----------------------+
+1 row in set (0.01 sec)
+
+mysql> CREATE TABLE employee (emp_id INT NOT NULL AUTO_INCREMENT PRIMARY_KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, salary DECIMAL(8,2), dept_id INT, manager_id INT,hire_date DATE,is_active BOOLEAN DEFAULT TRUE, CONSTRAINT fk_employee_department FOREIGN KEY (dept_id) REFERENCES department(dept_id),
+CONSTRAINT fk_employee_manager FOREIGN KEY (emp_id) REFERENCES employee(emp_id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'PRIMARY_KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) ' at line 1
+mysql> CREATE TABLE employee (emp_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, salary DECIMAL(8,2), dept_id INT, manager_id INT,hire_date DATE,is_active BOOLEAN DEFAULT TRUE, CONSTRAINT fk_employee_department FOREIGN KEY (dept_id) REFERENCES department(dept_id),
+CONSTRAINT fk_employee_manager FOREIGN KEY (emp_id) REFERENCES employee(emp_id));
+ERROR 6125 (HY000): Failed to add the foreign key constraint. Missing unique key for constraint 'fk_employee_manager' in the referenced table 'employee'
+mysql> CREATE TABLE employee (emp_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, salary DECIMAL(8,2), dept_id INT, manager_id INT,hire_date DATE,is_active BOOLEAN DEFAULT TRUE, CONSTRAINT fk_employee_department FOREIGN KEY (dept_id) REFERENCES department(dept_id),
+CONSTRAINT fk_employee_manager FOREIGN KEY (emp_id) REFERENCES employee(manager_id));
+ERROR 6125 (HY000): Failed to add the foreign key constraint. Missing unique key for constraint 'fk_employee_manager' in the referenced table 'employee'
+mysql> CREATE TABLE employee (emp_id INT NOT NULL AUTO_INCREMENT PRIMARY_KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, salary DECIMAL(8,2), dept_id INT, manager_id INT,hire_date DATE,is_active BOOLEAN DEFAULT TRUE, CONSTRAINT fk_employee_department FOREIGN KEY (dept_id) REFERENCES department(dept_id),
+CONSTRAINT fk_employee_manager FOREIGN KEY (manager_id) REFERENCES employee(emp_id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'PRIMARY_KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) ' at line 1
+mysql> CREATE TABLE employee (emp_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,first_name VARCHAR(100), last_name VARCHAR(100), email VARCHAR(100) NOT NULL UNIQUE, salary DECIMAL(8,2), dept_id INT, manager_id INT,hire_date DATE,is_active BOOLEAN DEFAULT TRUE, CONSTRAINT fk_employee_department FOREIGN KEY (dept_id) REFERENCES department(dept_id),
+CONSTRAINT fk_employee_manager FOREIGN KEY (manager_id) REFERENCES employee(emp_id));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DESCRIBE employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> 
+
+
+
+```
 6. Create a `project` table linked to department via FK.
+
+```bash
+mysql> 
+mysql> CREATE TABLE project (project_id INT AUTO_INCREMENT PRIMARY KEY,project_name VARCHAR(100) NOT NULL , start_date DATE, end_date DATE, budget DECIMAL(10,2) DEFAULT 0, dept_id INT CONSTRAINT fk_project_department FOREIGN KEY (dept_id) REFERENCES department(dept_id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FOREIGN KEY (dept_id) REFERENCES department(dept_id))' at line 1
+mysql> CREATE TABLE project (project_id INT AUTO_INCREMENT PRIMARY KEY,project_name VARCHAR(100) NOT NULL , start_date DATE, end_date DATE, budget DECIMAL(10,2) DEFAULT 0, dept_id INT, CONSTRAINT fk_project_department FOREIGN KEY (dept_id) REFERENCES department(dept_id));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DESCRIBE project;
++--------------+---------------+------+-----+---------+----------------+
+| Field        | Type          | Null | Key | Default | Extra          |
++--------------+---------------+------+-----+---------+----------------+
+| project_id   | int           | NO   | PRI | NULL    | auto_increment |
+| project_name | varchar(100)  | NO   |     | NULL    |                |
+| start_date   | date          | YES  |     | NULL    |                |
+| end_date     | date          | YES  |     | NULL    |                |
+| budget       | decimal(10,2) | YES  |     | 0.00    |                |
+| dept_id      | int           | YES  | MUL | NULL    |                |
++--------------+---------------+------+-----+---------+----------------+
+6 rows in set (0.01 sec)
+
+```
+
 7. Create a `works_on` junction table with composite PK (`emp_id`, `proj_id`) and an `hours` column.
+
+```bash
+mysql> CREATE table works_on (emp_id INT,project_id int, hours DECIMAL(5,2), PRIMARY KEY(emp_id,project_id). CONSTRAINT fk_workson_employee FOREIGN KEY (emp_id) REFERENCES employee(emp_id), CONSTRAINT fk_workson_project FOREIGN KEY(project_id) REFERENCES project(project_id) )
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '. CONSTRAINT fk_workson_employee FOREIGN KEY (emp_id) REFERENCES employee(emp_id' at line 1
+mysql> CREATE table works_on (emp_id INT,project_id int, hours DECIMAL(5,2), PRIMARY KEY(emp_id,project_id), CONSTRAINT fk_workson_employee FOREIGN KEY (emp_id) REFERENCES employee(emp_id), CONSTRAINT fk_workson_project FOREIGN KEY(project_id) REFERENCES project(project_id) );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DESCRIBE works_on;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| emp_id     | int          | NO   | PRI | NULL    |       |
+| project_id | int          | NO   | PRI | NULL    |       |
+| hours      | decimal(5,2) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 8. Add a `phone` column to `employee` using ALTER.
+
+**synact**
+
+```bash
+ALTER TABLE table_name
+ADD COLUMN column1 datatype,
+ADD COLUMN column2 datatype,
+ADD COLUMN column3 datatype;
+```
+
+
+``bash
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employee ADD COLUMNE phone VARCHAR(20);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'phone VARCHAR(20)' at line 1
+mysql> ALTER TABLE employee ADD COLUMN phone VARCHAR(20);
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
+| phone      | varchar(20)  | YES  |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+10 rows in set (0.01 sec)
+
+mysql> 
+
+```
+
 9. Drop the `phone` column.
+
+```bash
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
+| phone      | varchar(20)  | YES  |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+10 rows in set (0.01 sec)
+
+mysql> clear
+mysql> 
+mysql> desc works
+    -> ^C
+mysql> desc works_on;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| emp_id     | int          | NO   | PRI | NULL    |       |
+| project_id | int          | NO   | PRI | NULL    |       |
+| hours      | decimal(5,2) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employee DROP COLUMN phone;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> 
+```
+
 10. What is the difference between `DROP TABLE`, `TRUNCATE`, and `DELETE`?
+
+DELETE is a DML command that removes specific rows based on a WHERE condition, retains the table structure, supports rollback, fires triggers, and is the slowest due to row-by-row processing.  TRUNCATE is a DDL command that removes all rows instantly by deallocating data pages, retains the table structure and constraints, resets identity values, does not fire triggers, and is faster than DELETE.  DROP is a DDL command that permanently removes the entire table object, including its structure, data, indexes, and constraints, which cannot be rolled back. 
 
 ---
 
@@ -87,6 +384,19 @@
 
 ## UPDATE & DELETE
 48. Give all employees in a specific department a 10% salary raise.
+Insert 5 departments with different locations and budgets.
+12. Insert 10 employees — make sure some have `manager_id` pointing to existing employees.
+13. Insert 5 projects and assign employees to projects via `works_on`.
+
+---
+
+## SELECT — Basic
+14. Select all columns from `employee`.
+15. Select only `first_name`, `last_name`, and `salary` with column aliases.
+16. Select all employees sorted by salary descending.
+17. Select the top 3 highest paid employees.
+18. Select all distinct salary values.
+
 49. Soft-delete an employee by setting `is_active` to false.
 50. Hard-delete all inactive employees (handle FK constraint on `works_on` first).
 
