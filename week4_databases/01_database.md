@@ -1,214 +1,662 @@
-# Database
- what is data? data are the raw facts that are found after some experiment observation or after some experiments. Data iteself do nyoprovide any menaing but after processing it becomes information
+# Database Fundamentals — Study Reference
 
-Database: the collection of data orgaized in some specific manner is know as database. for example, univeristy database for maintaining information about students course and grade in wniveristiy
+---
 
-DBMS: softeare , computerized way of keepin record
+## 1. Core Concepts
 
+### Data vs Information vs Database
 
-data abstraction: hiding mechanism of deatils of data org and storage and highliighting of the essential features for a improves understanfing of data.
+| Term            | Definition                                                                      |
+| --------------- | ------------------------------------------------------------------------------- |
+| **Data**        | Raw, unprocessed facts (e.g., `92`, `Jasper`, `2024-01-15`)                     |
+| **Information** | Data processed to give meaning (e.g., "Jasper scored 92 on 15 Jan 2024")        |
+| **Database**    | Organized collection of related data stored and accessed electronically         |
+| **DBMS**        | Software layer that manages creation, querying, and administration of databases |
 
-There are 3 levels of abstraction
-1. physical level/lowest level : describes how deta is actually stored in database
-2. logical level: describes type od ata  -stored and relation between them
-3. View level/highest level: describes interaction between users and system
+**Examples of databases:** university student records, e-commerce product catalogs, hospital patient management systems.
 
-Data modes: ollection od condepts  thact can be used to describe structure of a database.
+---
 
-## database language
-- specialized lnaguage used to intercat with a database
-- definfing, controllign and m anipulating data
+## 2. Data Abstraction
 
+Hiding internal implementation details while exposing only what users need. There are **3 levels**:
 
-ddms langs: DDL, DCL, DML, TCL
+```
+┌─────────────────────────────────┐
+│      VIEW LEVEL (External)      │  ← What the user sees (e.g., a student portal)
+├─────────────────────────────────┤
+│     LOGICAL LEVEL (Conceptual)  │  ← What data exists and how it relates
+├─────────────────────────────────┤
+│    PHYSICAL LEVEL (Internal)    │  ← How data is actually stored on disk
+└─────────────────────────────────┘
+```
 
-DDL: CREATE, ALTER, DROP, TRUNCATE, RENAME
-DCL: GRANT, REVOKE
-DML: SELECT,INSERT,UPDATE,DELETE,MERGE,CALL
-TCL: COMMIT,ROLLBACK
+| Level    | Also Known As | Description                                                       |
+| -------- | ------------- | ----------------------------------------------------------------- |
+| Physical | Internal      | B-trees, heap files, indexes, storage blocks                      |
+| Logical  | Conceptual    | Tables, columns, data types, relationships                        |
+| View     | External      | Custom views per user/role (e.g., student sees only their grades) |
 
-DCL is used to control the access permissions fo users to the databases. It helps grant or revoke privileges to used, determining who can perfom actions like reading or modifying data.
+**Interview Q:** _Why is data abstraction important?_  
+It allows schema changes at one level without affecting other levels (called **data independence**). Physical independence = change storage without touching logical schema. Logical independence = change tables without breaking application views.
 
-GRANT PRIVILEGES ON OBJECT TO user
+---
 
-GRANT SELECT,INSERT ON student TO user
-REVOKE ALL PRIVILEGS ON student FROM user
+## 3. Relational Model Concepts
 
-What type of statents are generally controlled bu oj=bject privilegs? DML
+| Term            | Definition                             | Example                    |
+| --------------- | -------------------------------------- | -------------------------- |
+| **Relation**    | A table with rows and columns          | `student` table            |
+| **Tuple**       | A single row in a table                | One student's record       |
+| **Attribute**   | A column (field) in a table            | `student_name`, `grade`    |
+| **Domain**      | Set of allowed values for an attribute | `gender` → `{M, F, Other}` |
+| **Degree**      | Number of attributes in a relation     | 5 columns = degree 5       |
+| **Cardinality** | Number of tuples in a relation         | 200 rows = cardinality 200 |
 
-COMMIT command is used to save all changes made during the transaction in the DB. thi commanda ensures thta modeficstion made bythe DML statements such as  INSERT, UPDATE OR DELETE becomde permanent in the dabase
+---
 
-the rollback command is used to restire the DB  to its state at the last commit, efectiverly undoing any changes made since that point.
+## 4. Database Languages
 
-## Relation mdeo,, concepts
+```
+┌────────────────────────────────────────────┐
+│                  SQL                       │
+├──────────┬───────────┬──────────┬──────────┤
+│   DDL    │    DML    │   DCL    │   TCL    │
+│ (Define) │(Manipulate│ (Control)│(Transact)│
+└──────────┴───────────┴──────────┴──────────┘
+```
 
-IT reprets teh datvase an a colection of a relations, A relation is nothin but a table of values.
+---
 
-Every row in a table represents a collection of realted data values
+## 5. DDL — Data Definition Language
 
-the table name and cou=lumne names and helpful to interprre the meanibg of valuesin each row
-the data rae represnt as th set of relations.
+Used to **define and modify** the database structure/schema.
 
-Domain: A domainis a ser of acceptable values rha a colume is allowed to cintaine this is based on a varous propertis ad values ot model data.
- for example: the domain of marital sattus has a set possibilities: married, single, divorced
+| Command    | Purpose                                |
+| ---------- | -------------------------------------- |
+| `CREATE`   | Create a new table/database/index      |
+| `ALTER`    | Modify an existing table               |
+| `DROP`     | Delete a table/database permanently    |
+| `TRUNCATE` | Remove all rows but keep the structure |
+| `RENAME`   | Rename a table or column               |
 
-attribues: each row in the relation is known as tuple. IT contains teh data recoreds
-
-Relation: A reltion is relation data mmodel represnt the respectibve attirbutes models represnt the repsectie attibutes and teh correleation amoomng them
-
-## SQL STRUCTURED QUERY LANGUAGE
-
-1. create a table: CREATE tabel_name{
-  col1 datype, col2 datatype PRIMARY KEY(ONE OR MORE)
-}
-
-example
-
-### DATATYOPE SIN SQL
-1. number: INTEER,Int,SMALL INT, FLOAT, DOUBLE PRECIISON, DECIMAL(I,J) where i = total no. of decimal digit and j is the toatal no. og digit after deciaml point
-2. charater sstrng
-3. bit string
-4. boolean and null
-5. DATE
-6. TIME
-
-## bASIC RETRIEVAL QUERIS 
-
-SELECT-FROM-WHERE
-
-SELECT <attrname>
-FROM <table list>
-where <condition>
-
-## Ambigious Attribute names
-
-In sql the same name can be used for two or more attribures as long as the attributes are indifferebt tabkes
-
-if this is the acse ans a multibale query refers to the attribire namw with the relation name to present ambihty
-
-This is done by prefixing the relation name of teh name and separting the two by period .
+### CREATE TABLE
 
 ```sql
-SELECT EMPLOYEE.fname, Address
+CREATE TABLE student (
+    student_id   INT           PRIMARY KEY,
+    first_name   VARCHAR(50)   NOT NULL,
+    last_name    VARCHAR(50)   NOT NULL,
+    email        VARCHAR(100)  UNIQUE,
+    dob          DATE,
+    gpa          DECIMAL(3, 2),  -- 3 total digits, 2 after decimal (e.g. 3.85)
+    enrolled_on  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### ALTER TABLE
+
+```sql
+-- Add a new column
+ALTER TABLE student ADD COLUMN phone VARCHAR(15);
+
+-- Modify a column's data type
+ALTER TABLE student MODIFY COLUMN phone VARCHAR(20);
+
+-- Drop a column
+ALTER TABLE student DROP COLUMN phone;
+
+-- Add a constraint
+ALTER TABLE student ADD CONSTRAINT chk_gpa CHECK (gpa BETWEEN 0.00 AND 4.00);
+```
+
+### DROP vs TRUNCATE
+
+```sql
+-- TRUNCATE: removes all rows, keeps table structure, resets auto-increment
+TRUNCATE TABLE student;
+
+-- DROP: removes the entire table including structure (irreversible!)
+DROP TABLE student;
+
+-- Safe drop (won't error if table doesn't exist)
+DROP TABLE IF EXISTS student;
+```
+
+**Interview Q:** _Difference between DROP, DELETE, and TRUNCATE?_
+
+|                       | DROP | TRUNCATE    | DELETE            |
+| --------------------- | ---- | ----------- | ----------------- |
+| Removes structure     | yes  | no          | no                |
+| Removes data          | yes  | yes         | yes (conditional) |
+| WHERE clause          | no   | no          | yes               |
+| Rollback possible     | no   | no (mostly) | yes               |
+| Resets auto-increment | N/A  | yes         | no                |
+| Language category     | DDL  | DDL         | DML               |
+
+---
+
+## 6. SQL Data Types
+
+```sql
+-- Numeric
+age         INT,
+price       DECIMAL(10, 2),   -- 10 digits total, 2 after decimal
+rating      FLOAT,
+
+-- String
+name        VARCHAR(100),     -- variable length, up to 100 chars
+country     CHAR(2),          -- fixed length (e.g., 'NP', 'US')
+bio         TEXT,             -- large text
+
+-- Date/Time
+created_at  DATE,             -- '2024-01-15'
+login_time  TIME,             -- '14:30:00'
+updated_at  DATETIME,         -- '2024-01-15 14:30:00'
+ts          TIMESTAMP,        -- stored in UTC, auto-converts timezone
+
+-- Boolean
+is_active   BOOLEAN,          -- TRUE / FALSE
+
+-- NULL
+-- Any column can hold NULL unless constrained with NOT NULL
+```
+
+---
+
+## 7. DML — Data Manipulation Language
+
+Used to **read and modify** the actual data in tables.
+
+| Command  | Purpose              |
+| -------- | -------------------- |
+| `SELECT` | Retrieve data        |
+| `INSERT` | Add new rows         |
+| `UPDATE` | Modify existing rows |
+| `DELETE` | Remove rows          |
+
+### INSERT
+
+```sql
+-- Single row
+INSERT INTO student (student_id, first_name, last_name, email, gpa)
+VALUES (1, 'Jasper', 'Badu', 'jasper@example.com', 3.90);
+
+-- Multiple rows
+INSERT INTO student (student_id, first_name, last_name, gpa)
+VALUES
+    (2, 'Riya',   'Sharma', 3.75),
+    (3, 'Bikash', 'Thapa',  3.50),
+    (4, 'Anita',  'Rai',    3.85);
+```
+
+### SELECT — Basic to Advanced
+
+```sql
+-- All columns
+SELECT * FROM student;
+
+-- Specific columns
+SELECT first_name, last_name, gpa FROM student;
+
+-- With alias
+SELECT first_name AS fname, gpa AS score FROM student;
+
+-- With condition
+SELECT * FROM student WHERE gpa > 3.50;
+
+-- Multiple conditions
+SELECT * FROM student WHERE gpa > 3.50 AND enrolled_on > '2023-01-01';
+
+-- ORDER BY
+SELECT * FROM student ORDER BY gpa DESC;
+
+-- LIMIT
+SELECT * FROM student ORDER BY gpa DESC LIMIT 5;
+
+-- DISTINCT
+SELECT DISTINCT gpa FROM student;
+
+-- Aggregate functions
+SELECT COUNT(*), AVG(gpa), MAX(gpa), MIN(gpa) FROM student;
+
+-- GROUP BY + HAVING
+SELECT gpa, COUNT(*) AS total
+FROM student
+GROUP BY gpa
+HAVING COUNT(*) > 1;
+```
+
+### WHERE Clause Operators
+
+```sql
+-- BETWEEN (inclusive)
+SELECT * FROM student WHERE gpa BETWEEN 3.00 AND 4.00;
+
+-- IN
+SELECT * FROM student WHERE student_id IN (1, 3, 5);
+
+-- LIKE — pattern matching
+SELECT * FROM student WHERE first_name LIKE 'J%';       -- starts with J
+SELECT * FROM student WHERE email LIKE '%@gmail.com';   -- ends with @gmail.com
+SELECT * FROM student WHERE first_name LIKE '_a%';      -- 2nd char is 'a'
+SELECT * FROM student WHERE phone LIKE '98______';      -- 98 + exactly 6 chars
+
+-- IS NULL / IS NOT NULL
+SELECT * FROM student WHERE email IS NULL;
+SELECT * FROM student WHERE email IS NOT NULL;
+
+-- NOT
+SELECT * FROM student WHERE gpa NOT BETWEEN 3.00 AND 3.50;
+```
+
+**Interview Q:** _Why can't you use `= NULL` in SQL?_  
+`NULL` represents unknown/missing data. Comparing `NULL = NULL` evaluates to `UNKNOWN`, not `TRUE`. You must use `IS NULL` or `IS NOT NULL`.
+
+### UPDATE
+
+```sql
+-- Update single row
+UPDATE student SET gpa = 3.95 WHERE student_id = 1;
+
+-- Update multiple columns
+UPDATE student
+SET gpa = 3.80, email = 'jasper.new@example.com'
+WHERE student_id = 1;
+
+--  Always use WHERE with UPDATE or you'll update every row
+```
+
+### DELETE
+
+```sql
+-- Delete specific rows
+DELETE FROM student WHERE student_id = 4;
+
+-- Delete with condition
+DELETE FROM student WHERE gpa < 2.00;
+
+--   DELETE without WHERE removes ALL rows (but unlike TRUNCATE, it's rollbackable)
+```
+
+---
+
+## 8. Joins
+
+```sql
+-- Setup: two tables
+CREATE TABLE department (
+    dept_id   INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+CREATE TABLE employee (
+    emp_id    INT PRIMARY KEY,
+    name      VARCHAR(100),
+    dept_id   INT,
+    salary    DECIMAL(10,2),
+    FOREIGN KEY (dept_id) REFERENCES department(dept_id)
+);
+```
+
+### INNER JOIN — only matching rows
+
+```sql
+SELECT e.name, d.dept_name
+FROM employee e
+INNER JOIN department d ON e.dept_id = d.dept_id;
+```
+
+### LEFT JOIN — all left rows + matching right
+
+```sql
+-- Returns all employees, even those with no department
+SELECT e.name, d.dept_name
+FROM employee e
+LEFT JOIN department d ON e.dept_id = d.dept_id;
+```
+
+### RIGHT JOIN — all right rows + matching left
+
+```sql
+SELECT e.name, d.dept_name
+FROM employee e
+RIGHT JOIN department d ON e.dept_id = d.dept_id;
+```
+
+### Self Join — join a table to itself
+
+```sql
+-- Find employees and their managers (both in same table)
+SELECT e.name AS employee, m.name AS manager
+FROM employee e
+JOIN employee m ON e.manager_id = m.emp_id;
+```
+
+**Interview Q:** _Difference between INNER JOIN and LEFT JOIN?_  
+INNER JOIN returns only rows where the join condition matches in **both** tables. LEFT JOIN returns **all** rows from the left table even when there's no match on the right (unmatched right columns are NULL).
+
+---
+
+## 9. Aliases and Ambiguous Attribute Names
+
+When querying multiple tables with same column names, prefix with table name or alias:
+
+```sql
+-- Without alias — ambiguous if both tables have 'name' column
+SELECT employee.name, department.name
 FROM employee, department
-WHERE Dnmae="Reaserch" AND Dnumber='dno'
+WHERE employee.dept_id = department.dept_id;
 
+-- With alias — cleaner
+SELECT e.name AS emp_name, d.name AS dept_name
+FROM employee AS e
+JOIN department AS d ON e.dept_id = d.dept_id;
 ```
 
-## Aliasing and tupe variables
+---
 
-keyword: AS
-
-```SQL
- SELECT e.fname, e.lname, s.fname,s.lname
-FROM EMPLOYEE AS E, EMPLOYEE AS s
-WHERE e.siper_ssn=s.ssn
-
-```
-
-Asterik (*) = all
-
-## Pattern matching and arithmertic operatos
-
-This feature allows comparison conditions on any parts of a character string, sunginthe LIKE compariosn operatio . this can be used for string pattern matching
-
-Partial strings are speified using two reserves characters, % replaces an arbotary number of ero ro more charcaters and the  unerscore (_)  replaces a single characters
-
-Patterns are case sensitive special characters (percent, underscore) can be uncluded in patterns using an escpe charavter \ baclslash
-
-### example
-
-1. 'RAJ%' MATCHE ANU STRING starting ith RAj
-2. '%RAJ' matches any string ending with RAJ
-3. --91 matches with any string ending with 91 wuth any two characters before that
-4. ---- matches any string with exactly four characters
-
-%,_ are the wild card ioperators 
-
-##  Other operatoes
-
-arithmatic operator; + - * / %
-comparison operatoes: also called WHERE clause opeators: =,< , > , <=,=>, <> or != ,!> , !< etc
-logical operator: NAD OR NOT
-
-BETWEEN:- seacrhes the values within the range metnioned
-EXISTS: uses to search for the row's present in the table
-LIKE: compares a pattern using wildcar operatos
-ALL: used to compare specific values to all otehr values in set
-ANY: compares a specific values to any of the values in set
-
-since null can never be equal to any value, it can never be unqual, either
-
-the coret way to write the queries is insted of using boolean compariosn operators such as less than a greater thean , equal to and not equal to these queris must be written with the special comparison opertor. IS NUL the is null operator test wheregr values is null or not null and returnns a boolean
-
-for ex: select * from table where columen is not null;
-
-similary there are nested quesries
-
-## concepot of view
-
-single table that is derived from other tables 
+## 10. Subqueries / Nested Queries
 
 ```sql
-CREATE VIEW command
+-- Scalar subquery: returns single value
+SELECT name FROM employee
+WHERE salary > (SELECT AVG(salary) FROM employee);
 
-CREATE VIEW new_name AS
-SELECT col1, col2
-FROM table_name
-WHERE cindition
+-- IN subquery: returns a list
+SELECT name FROM employee
+WHERE dept_id IN (SELECT dept_id FROM department WHERE dept_name = 'Engineering');
 
+-- EXISTS subquery: checks for existence
+SELECT name FROM employee e
+WHERE EXISTS (
+    SELECT 1 FROM department d
+    WHERE d.dept_id = e.dept_id AND d.dept_name = 'DevOps'
+);
 
+-- Correlated subquery: references outer query
+SELECT name, salary
+FROM employee e1
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM employee e2
+    WHERE e1.dept_id = e2.dept_id  -- compares within same department
+);
 ```
 
-## TRANSACTION PROCESSING
+---
 
-A transaction is an executinf program that forms a logical unit of database processing.
+## 11. DCL — Data Control Language
 
-A transacgtion includes one or more databasea access operations these can include insertion, deletion, modification ot retrieval operations.
+Used to **grant or revoke** access permissions.
 
-### Read abd write operatons
+```sql
+-- Grant specific privileges
+GRANT SELECT, INSERT ON student TO 'john'@'localhost';
 
-read_item(x)
-write_items(x)
+-- Grant all privileges
+GRANT ALL PRIVILEGES ON university_db.* TO 'admin'@'%';
 
-DBMS buffer
+-- Revoke specific privileges
+REVOKE INSERT ON student FROM 'john'@'localhost';
 
-Consurrency and concurency control
+-- Revoke all privileges
+REVOKE ALL PRIVILEGES ON student FROM 'john'@'localhost';
 
-read write and write write conflict issues
+-- Show grants for a user
+SHOW GRANTS FOR 'john'@'localhost';
+```
 
-ACID PROPTIES
-NORMALIZATION
-transcstion states nad operatis
+**Object-level privileges** (controlled by DCL, executed via DML):  
+`SELECT`, `INSERT`, `UPDATE`, `DELETE`, `EXECUTE`, `REFERENCES`
 
+**Interview Q:** _Difference between GRANT and REVOKE?_  
+`GRANT` gives a user permission to perform actions. `REVOKE` removes previously granted permissions. Both are DCL commands and take effect immediately.
 
+---
 
-A trancation is an atomic unnit of work that should either be completed in its entirert ir not done at all
+## 12. TCL — Transaction Control Language
 
+A **transaction** is a logical unit of work — all operations must succeed together or none at all.
 
+### ACID Properties
 
+| Property        | Meaning                                 | Example                                                       |
+| --------------- | --------------------------------------- | ------------------------------------------------------------- |
+| **Atomicity**   | All or nothing                          | Transfer ₹1000: debit AND credit both happen, or neither does |
+| **Consistency** | DB stays in valid state                 | Total money before = total money after transfer               |
+| **Isolation**   | Concurrent transactions don't interfere | Two users booking the same seat — only one succeeds           |
+| **Durability**  | Committed changes survive crashes       | After COMMIT, power failure won't lose the data               |
 
-## Instalation od mysql using docker
+### TCL Commands
+
+```sql
+-- COMMIT: permanently save all changes in current transaction
+BEGIN;
+    UPDATE accounts SET balance = balance - 1000 WHERE acc_id = 1;
+    UPDATE accounts SET balance = balance + 1000 WHERE acc_id = 2;
+COMMIT;  -- both updates are now permanent
+
+-- ROLLBACK: undo all changes since last COMMIT
+BEGIN;
+    DELETE FROM student WHERE gpa < 2.0;
+ROLLBACK;  -- mistake! all deleted rows are restored
+
+-- SAVEPOINT: create a named checkpoint within a transaction
+BEGIN;
+    INSERT INTO orders VALUES (101, 'Laptop', 80000);
+    SAVEPOINT after_insert;
+
+    UPDATE inventory SET stock = stock - 1 WHERE item = 'Laptop';
+    -- something went wrong with update...
+    ROLLBACK TO after_insert;  -- rolls back only the UPDATE, keeps the INSERT
+
+COMMIT;
+```
+
+**Interview Q:** _What happens if a COMMIT is not issued?_  
+Changes remain in a pending/uncommitted state. Other transactions may not see those changes (depending on isolation level), and they'll be lost if the session terminates or crashes.
+
+---
+
+## 13. Views
+
+A **view** is a virtual table derived from a SELECT query. The underlying data isn't duplicated.
+
+```sql
+-- Create a view
+CREATE VIEW high_gpa_students AS
+SELECT student_id, first_name, last_name, gpa
+FROM student
+WHERE gpa >= 3.75;
+
+-- Query a view just like a table
+SELECT * FROM high_gpa_students;
+
+-- Update a view definition
+CREATE OR REPLACE VIEW high_gpa_students AS
+SELECT student_id, first_name, last_name, gpa, email
+FROM student
+WHERE gpa >= 3.75;
+
+-- Drop a view
+DROP VIEW high_gpa_students;
+```
+
+**Use cases for views:**
+
+- Security: expose only certain columns to certain users
+- Simplify complex joins into a reusable query
+- Backward compatibility when table schema changes
+
+**Interview Q:** _Can you UPDATE data through a view?_  
+Yes, but only if the view maps directly to a single base table without aggregations, DISTINCT, GROUP BY, HAVING, or subqueries. Complex views are generally read-only.
+
+---
+
+## 14. Normalization
+
+Process of organizing tables to **reduce redundancy** and improve data integrity.
+
+| Normal Form | Rule                                                                              |
+| ----------- | --------------------------------------------------------------------------------- |
+| **1NF**     | Each column has atomic values; no repeating groups                                |
+| **2NF**     | 1NF + no partial dependency (non-key column depends on entire PK)                 |
+| **3NF**     | 2NF + no transitive dependency (non-key column depends on another non-key column) |
+| **BCNF**    | Stricter 3NF — every determinant must be a candidate key                          |
+
+**Interview Q:** _What is a transitive dependency?_  
+When column C depends on column B, and column B depends on the primary key A. So A → B → C. In 3NF you remove this by splitting the table so B → C lives in its own table.
+
+---
+
+## 15. Indexes
+
+Used to speed up read queries at the cost of slower writes and extra storage.
+
+```sql
+-- Create an index
+CREATE INDEX idx_student_email ON student(email);
+
+-- Create a unique index
+CREATE UNIQUE INDEX idx_student_email_unique ON student(email);
+
+-- Composite index (useful when filtering on multiple columns together)
+CREATE INDEX idx_name_gpa ON student(last_name, gpa);
+
+-- Drop an index
+DROP INDEX idx_student_email ON student;
+
+-- Check if a query uses an index
+EXPLAIN SELECT * FROM student WHERE email = 'jasper@example.com';
+```
+
+**Interview Q:** _When should you NOT create an index?_  
+On columns with low cardinality (e.g., boolean, gender), on small tables where a full scan is faster, or on columns that are frequently updated — every write must also update the index.
+
+---
+
+## 16. Running MySQL with Docker
 
 ```bash
-docker run -d --name mysql-container -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v mysql-data: /var/lib/mysql mysql:8.4
+# Start MySQL 8.4 container with persistent volume
+docker run -d \
+  --name mysql-container \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -p 3306:3306 \
+  -v mysql-data:/var/lib/mysql \
+  mysql:8.4
 
-docker exec -it mysql-container /bin/bash 
+# Enter the container shell
+docker exec -it mysql-container /bin/bash
 
+# Connect to MySQL CLI inside container
 mysql -u root -p
+
+# Or connect directly from host (if mysql-client is installed)
+mysql -h 127.0.0.1 -P 3306 -u root -p
 ```
 
-#3 port number of popular database
+```sql
+-- Basic MySQL admin commands
+SHOW DATABASES;
+CREATE DATABASE university_db;
+USE university_db;
+SHOW TABLES;
+DESCRIBE student;
+```
 
-- mysql: 3306
-- postgres: 5432:5432
-- mongodv:  27017
-- redis: 6379
+---
 
+## 17. Common Database Port Numbers
 
+| Database   | Default Port |
+| ---------- | ------------ |
+| MySQL      | 3306         |
+| PostgreSQL | 5432         |
+| MongoDB    | 27017        |
+| Redis      | 6379         |
+| MSSQL      | 1433         |
+| Oracle     | 1521         |
 
+---
 
+## 18. Relational vs Non-Relational Databases
 
+|                  | Relational (SQL)                        | Non-Relational (NoSQL)                    |
+| ---------------- | --------------------------------------- | ----------------------------------------- |
+| **Structure**    | Tables with fixed schema                | Documents, key-value, graphs, columns     |
+| **Schema**       | Rigid, defined upfront                  | Flexible, dynamic                         |
+| **Scaling**      | Vertical (scale up)                     | Horizontal (scale out)                    |
+| **Transactions** | ACID by default                         | Eventual consistency (usually)            |
+| **Examples**     | MySQL, PostgreSQL, MSSQL                | MongoDB, Redis, Cassandra, DynamoDB       |
+| **Best for**     | Financial systems, ERP, structured data | Caching, catalogs, IoT, unstructured data |
+
+**Interview Q:** _Why would you choose PostgreSQL over MongoDB for a banking application?_  
+Banking requires strict ACID compliance, complex joins across normalized tables, and consistent schemas. PostgreSQL guarantees transactional integrity natively. MongoDB's flexible schema and eventual consistency model are a poor fit where every debit/credit must be atomic and auditable.
+
+---
+
+## 19. How MySQL Stores Data
+
+- Data is stored in **tablespace files** (`.ibd` files per table with InnoDB engine)
+- InnoDB uses a **clustered index** — the primary key IS the physical storage order (B+ tree)
+- Row data, indexes, undo logs, and redo logs are all separate structures
+- Default storage engine: **InnoDB** (supports ACID, foreign keys, row-level locking)
+- Alternative: **MyISAM** (faster reads, no transactions, table-level locking)
+
+---
+
+## 20. Questions
+
+### Conceptual
+
+1. What is the difference between a primary key and a unique key?
+2. What is a foreign key? What happens on DELETE of a referenced row?
+3. Explain ACID properties with a real-world example.
+4. What is the difference between clustered and non-clustered indexes?
+5. What are the different types of JOINs? When would you use each?
+6. What is normalization? Why is it important? What are its trade-offs?
+7. What is a deadlock in a database? How do you prevent it?
+8. What is the difference between optimistic and pessimistic locking?
+
+### Query Writing (expect live coding)
+
+1. Find the second highest salary from an `employee` table.
+
+```sql
+SELECT MAX(salary) FROM employee WHERE salary < (SELECT MAX(salary) FROM employee);
+-- or
+SELECT salary FROM employee ORDER BY salary DESC LIMIT 1 OFFSET 1;
+```
+
+2. Find employees who earn more than their department average.
+
+```sql
+SELECT e.name, e.salary, e.dept_id
+FROM employee e
+WHERE e.salary > (SELECT AVG(salary) FROM employee WHERE dept_id = e.dept_id);
+```
+
+3. Find duplicate emails in a `users` table.
+
+```sql
+SELECT email, COUNT(*) AS cnt
+FROM users
+GROUP BY email
+HAVING COUNT(*) > 1;
+```
+
+4. Delete duplicate rows keeping only the one with the lowest `id`.
+
+```sql
+DELETE FROM users
+WHERE id NOT IN (
+    SELECT MIN(id) FROM users GROUP BY email
+);
+```
+
+---
 
 # REFERENCES
 
