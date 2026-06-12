@@ -319,8 +319,221 @@ DELETE is a DML command that removes specific rows based on a WHERE condition, r
 
 ## DML — INSERT
 11. Insert 5 departments with different locations and budgets.
+```SQL
+
+mysql> DESC department;
++-----------+---------------+------+-----+---------+----------------+
+| Field     | Type          | Null | Key | Default | Extra          |
++-----------+---------------+------+-----+---------+----------------+
+| dept_id   | int           | NO   | PRI | NULL    | auto_increment |
+| dept_name | varchar(50)   | NO   | UNI | NULL    |                |
+| location  | varchar(50)   | YES  |     | NULL    |                |
+| budget    | decimal(15,2) | YES  |     | 0.00    |                |
++-----------+---------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> Insert 5 departments with different locations and budgets^C
+mysql> INSERT INTO department (dept_name,location,budget)
+    -> VALUES
+    -> ("krispcall","Kalopul",10000.004)
+    -> ("Tivazo","baneswor",12221.232)
+    -> ("Dialaxy","Chabahill",1212121.1212)
+    -> ("Lumbinni medical College","lumbini",1752615.71267)
+    -> ("Entegra","Bagbazaar",122233.98);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '("Tivazo","baneswor",12221.232)
+("Dialaxy","Chabahill",1212121.1212)
+("Lumbinni ' at line 4
+mysql> INSERT INTO department (dept_name,location,budget) VALUES ("krispcall","Kalopul",10000.004), ("Tivazo","baneswor",12221.232), (DDD"Dialaxy","Chabahill",1212121.1212)
+,("Lumbinni medical College","lumbini",1752615.71267), ("Entegra","Bagbazaar",122233.98);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '"Dialaxy","Chabahill",1212121.1212) ,("Lumbinni medical College","lumbini",17526' at line 1
+mysql> INSERT INTO department (dept_name,location,budget) VALUES ("krispcall","Kalopul",10000.004), ("Tivazo","baneswor",12221.232), ("Dialaxy","Chabahill",1212121.1212) ,("Lumbinni medical College","lumbini",1752615.71267), ("Entegra","Bagbazaar",122233.98);
+Query OK, 5 rows affected, 4 warnings (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 4
+
+mysql> SELECT * FROM department;
++---------+--------------------------+-----------+------------+
+| dept_id | dept_name                | location  | budget     |
++---------+--------------------------+-----------+------------+
+|       1 | krispcall                | Kalopul   |   10000.00 |
+|       2 | Tivazo                   | baneswor  |   12221.23 |
+|       3 | Dialaxy                  | Chabahill | 1212121.12 |
+|       4 | Lumbinni medical College | lumbini   | 1752615.71 |
+|       5 | Entegra                  | Bagbazaar |  122233.98 |
++---------+--------------------------+-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+
+```
 12. Insert 10 employees — make sure some have `manager_id` pointing to existing employees.
+
+```sql
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> Insert 10 employees  make sure some have `manager_id` pointing to existing employees.^C
+mysql> INSERT INTO employee (first_name,last_name,email,salary,dept_id,manager_id,hire_date,is_active)
+    -> VALUES
+    -> ('John',"Smith","john.smith@codavatar.tech","90000",1,NULL,'2020-01-15',TRUE),
+    -> ('Sarah',   'Johnson',  'sarah.johnson@company.com', 85000.00, 2, NULL, '2020-03-20', 1),
+    -> ('Michael', 'Brown',    'michael.brown@company.com', 80000.00, 3, NULL, '2021-02-10', 1),
+    -> ('Emily',   'Davis',    'emily.davis@company.com',   65000.00, 1, 1,    '2021-06-01', 1),
+    -> ('David',   'Wilson',   'david.wilson@company.com',  62000.00, 1, 1,    '2021-08-15', 1),
+    -> ('Jessica', 'Miller',   'jessica.miller@company.com',60000.00, 2, 2,    '2022-01-12', 1),
+    -> ('Daniel',  'Moore',    'daniel.moore@company.com',  58000.00, 2, 2,    '2022-04-18', 1),
+    -> ('Ashley',  'Taylor',   'ashley.taylor@company.com', 61000.00, 3, 3,    '2022-07-22', 1),
+    -> ('Matthew', 'Anderson', 'matthew.anderson@company.com',59000.00,3,3,    '2023-01-09', 1),
+    -> ('Olivia',  'Thomas',   'olivia.thomas@company.com', 55000.00, 1, 1,    '2023-05-11', 1);
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql>
+
+```
+
 13. Insert 5 projects and assign employees to projects via `works_on`.
+```sql
+mysql> DESC works_on;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| emp_id     | int          | NO   | PRI | NULL    |       |
+| project_id | int          | NO   | PRI | NULL    |       |
+| hours      | decimal(5,2) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> Insert 5 projects and assign employees to projects via `works_on
+    `> ^C
+mysql> DESC project;
++--------------+---------------+------+-----+---------+----------------+
+| Field        | Type          | Null | Key | Default | Extra          |
++--------------+---------------+------+-----+---------+----------------+
+| project_id   | int           | NO   | PRI | NULL    | auto_increment |
+| project_name | varchar(100)  | NO   |     | NULL    |                |
+| start_date   | date          | YES  |     | NULL    |                |
+| end_date     | date          | YES  |     | NULL    |                |
+| budget       | decimal(10,2) | YES  |     | 0.00    |                |
+| dept_id      | int           | YES  | MUL | NULL    |                |
++--------------+---------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO project
+    -> VALUES
+    -> ('ERP Upgrade',      '2025-01-01', '2025-12-31', 500000.00, 1),
+    -> ('Mobile App',       '2025-02-15', '2025-10-30', 250000.00, 2),
+    -> ('Data Warehouse',   '2025-03-01', '2025-11-30', 400000.00, 3),
+    -> ('Website Redesign', '2025-04-01', '2025-08-31', 120000.00, 1),
+    -> ('Cloud Migration',  '2025-05-01', '2026-01-31', 600000.00, 3);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> INSERT INTO project (project_name,start_date,end_date,budget,dept_id) VALUES ('ERP Upgrade',      '2025-01-01', '2025-12-31', 500000.00, 1), ('Mobile App',       '202
+5-02-15', '2025-10-30', 250000
+d Migration',  '2025-05-01', '2026-01-31', 600000.
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM project;
++------------+------------------+------------+------------+-----------+---------+
+| project_id | project_name     | start_date | end_date   | budget    | dept_id |
++------------+------------------+------------+------------+-----------+---------+
+|          1 | ERP Upgrade      | 2025-01-01 | 2025-12-31 | 500000.00 |       1 |
+|          2 | Mobile App       | 2025-02-15 | 2025-10-30 | 250000.00 |       2 |
+|          3 | Data Warehouse   | 2025-03-01 | 2025-11-30 | 400000.00 |       3 |
+|          4 | Website Redesign | 2025-04-01 | 2025-08-31 | 120000.00 |       1 |
+|          5 | Cloud Migration  | 2025-05-01 | 2026-01-31 | 600000.00 |       3 |
++------------+------------------+------------+------------+-----------+---------+
+5 rows in set (0.01 sec)
+
+mysql> INSERT INTO works_on (emp_id,project_id,hours)
+    -> VALUES
+    -> (1,140.00),
+    -> (1, 5, 25.00),
+    -> 
+    -> (2, 2, 35.00),
+    -> (2, 3, 20.00),
+    -> 
+    -> (3, 3, 45.00),
+    -> (3, 5, 30.00),
+    -> 
+    -> (4, 1, 30.00),
+    -> (4, 4, 15.00),
+    -> 
+    -> (5, 1, 25.00),
+    -> 
+    -> (6, 2, 40.00),
+    -> (6, 4, 10.00),
+    -> 
+    -> (7, 2, 20.00),
+    -> 
+    -> (8, 3, 35.00),
+    -> 
+    -> (9, 5, 40.00),
+    -> 
+    -> (10, 4, 25.00),
+    -> (10, 5, 15.00);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> INSERT INTO works_on (emp_id,project_id,hours) VALUES (1,1,40.00), (1, 5, 25.00),  (2, 2, 35.00), (2, 3, 20.00),  (3, 3, 45.00), (3, 5, 30.00),  (4, 1, 30.00), (4, 4,
+ 15.00),  (5, 1, 25.00),  (6, 2, 40.00), (6, 4, 10.00),  (7, 2, 20.00),  (8, 3, 35.00),  (9, 5, 40.00),  (10, 4, 25.00), (10, 5, 15.00);
+Query OK, 16 rows affected (0.00 sec)
+Records: 16  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM works_on;
++--------+------------+-------+
+| emp_id | project_id | hours |
++--------+------------+-------+
+|      1 |          1 | 40.00 |
+|      1 |          5 | 25.00 |
+|      2 |          2 | 35.00 |
+|      2 |          3 | 20.00 |
+|      3 |          3 | 45.00 |
+|      3 |          5 | 30.00 |
+|      4 |          1 | 30.00 |
+|      4 |          4 | 15.00 |
+|      5 |          1 | 25.00 |
+|      6 |          2 | 40.00 |
+|      6 |          4 | 10.00 |
+|      7 |          2 | 20.00 |
+|      8 |          3 | 35.00 |
+|      9 |          5 | 40.00 |
+|     10 |          4 | 25.00 |
+|     10 |          5 | 15.00 |
++--------+------------+-------+
+16 rows in set (0.00 sec)
+
+mysql> 
+
+
+```
 
 ---
 
