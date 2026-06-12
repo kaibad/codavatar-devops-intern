@@ -752,12 +752,183 @@ mysql> SELECT DISTINCT salary FROM employee;
 
 ## WHERE & Operators
 19. Find employees with salary greater than 90000.
+
+```mysql
+mysql> 
+mysql> SELECT * FROM employee WHERE salary > 90000;
+Empty set (0.01 sec)
+
+mysql> SELECT * FROM employee WHERE salary > 80000;
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 20. Find employees with salary between 70000 and 95000.
+
+```SQL
+mysql> SELECT * FROM employee WHERE salary BETWEEN 70000 AND 95000;
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+3 rows in set (0.01 sec)
+
+mysql> 
+
+
+```
+
 21. Find employees in `dept_id` 1 or 2 using `IN`.
+
+```SQL
+mysql> Find employees in `dept_id` 1 or 2 using `IN`^C
+mysql> SELECT * FROM employee IN dept_id 1 or 2;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IN dept_id 1 or 2' at line 1
+mysql> SELECT * FROM employee WHERE dept_id IN 1 or 2;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1 or 2' at line 1
+mysql> SELECT * FROM employee WHERE dept_id IN (1 or 2);
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com   | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com  | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT * FROM employee WHERE dept_id IN (1 and 2);
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com   | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com  | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employee WHERE dept_id IN (1 , 2);
++--------+------------+-----------+----------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                      | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+----------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech  | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com    | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com   | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com  | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com  | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com   | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
++--------+------------+-----------+----------------------------+----------+---------+------------+------------+-----------+
+7 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 22. Find employees whose `first_name` starts with 'A'.
-23. Find employees whose email ends with `@company.com`.
+
+```SQL
+mysql> SELECT * FROM employee WHERE first_name =A%
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> SELECT * FROM employee WHERE first_name A%;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'A%' at line 1
+mysql> SELECT * FROM employee WHERE first_name LIKE A%;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%' at line 1
+mysql> SELECT * FROM employee WHERE first_name LIKE 'A%';
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+1 row in set (0.01 sec)
+
+mysql>
+```
+23. Find employees whose email ends with `@codavatar.tech`.
+
+```SQL
+mysql> SELECT * FROM employee WHERE email LIKE '%codavatar.tech';
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> 
+
+```
+
 24. Find all top-level managers (no manager assigned).
+
+```sql
+
+mysql> SELECT * FROM employee WHERE emp_id IS NULL;
+Empty set (0.01 sec)
+
+mysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employee WHERE manager_id IS NULL;
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+3 rows in set (0.01 sec)
+
+```
+
 25. Find all employees who have a manager assigned.
+
+```SQL
+
+mysql> SELECT * FROM employee WHERE manager_id IS NOT NULL ORDER BY first_name;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+7 rows in set (0.00 sec)
+
+mysql> 
+
+```
 
 ---
 
