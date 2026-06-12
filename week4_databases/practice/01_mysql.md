@@ -539,11 +539,215 @@ mysql>
 
 ## SELECT — Basic
 14. Select all columns from `employee`.
+
+```sql
+
+mysql> SHOW TABLES;
++----------------------+
+| Tables_in_company_db |
++----------------------+
+| department           |
+| employee             |
+| project              |
+| works_on             |
++----------------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql>
+
+```
 15. Select only `first_name`, `last_name`, and `salary` with column aliases.
+
+```sql
+
+mysql> show tables;
++----------------------+
+| Tables_in_company_db |
++----------------------+
+| department           |
+| employee             |
+| project              |
+| works_on             |
++----------------------+
+4 rows in set (0.01 sec)
+
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT first_name AS fname, last_name AS lname, salary AS sal FROM employee;
++---------+----------+----------+
+| fname   | lname    | sal      |
++---------+----------+----------+
+| John    | Smith    | 90000.00 |
+| Sarah   | Johnson  | 85000.00 |
+| Michael | Brown    | 80000.00 |
+| Emily   | Davis    | 65000.00 |
+| David   | Wilson   | 62000.00 |
+| Jessica | Miller   | 60000.00 |
+| Daniel  | Moore    | 58000.00 |
+| Ashley  | Taylor   | 61000.00 |
+| Matthew | Anderson | 59000.00 |
+| Olivia  | Thomas   | 55000.00 |
++---------+----------+----------+
+10 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 16. Select all employees sorted by salary descending.
+
+The ORDER BY keyword is used to sort the result set in ascending or descending order,
+
+The ORDER BY keyword sorts the result set in ascending order (ASC) by default
+
+***example*** SELECT * FROM products ORDER BY prices;
+
+For string values, the ORDER BY  keyword will sort the values in the column alphabetically.
+
+***syntax***
+
+```sql
+SELECT col1,col2,....
+FROM table_name
+ORDER BY col1,col2,... ASC|DESC;
+```
+
+```sql
+
+mysql> SELECT * FROM employee ORDERBY salary DESC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'salary DESC' at line 1
+mysql> SELECT * FROM employee ORDER BY salary DESC;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employee ORDER BY salary;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 17. Select the top 3 highest paid employees.
+
+in this we first do the ordering and limit  3.
+
+```sql
+mysql> 
+mysql> SELECT * FROM employee ORDER BY salary DESC LIMIT 3;
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                     | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
++--------+------------+-----------+---------------------------+----------+---------+------------+------------+-----------+
+3 rows in set (0.00 sec)
+
+mysql>
+
+```
+
+
+
+
 18. Select all distinct salary values.
 
+```sql
+mysql> select * from employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> Select all distinct salary values.^C
+mysql> SELECT DISTINCT salary FROM employee;
++----------+
+| salary   |
++----------+
+| 90000.00 |
+| 85000.00 |
+| 80000.00 |
+| 65000.00 |
+| 62000.00 |
+| 60000.00 |
+| 58000.00 |
+| 61000.00 |
+| 59000.00 |
+| 55000.00 |
++----------+
+10 rows in set (0.01 sec)
+
+
+```
 ---
 
 ## WHERE & Operators
