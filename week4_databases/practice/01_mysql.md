@@ -933,11 +933,273 @@ mysql>
 ---
 
 ## Aggregates & GROUP BY
+**ref:** https://learnsql.com/blog/sql-group-by-aggregate-functions-overview/
+
 26. Count total number of employees.
+
+```sql
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT COUNT (*) AS no_of_employee FROM employee GROUP BY emp_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '*) AS no_of_employee FROM employee GROUP BY emp_id' at line 1
+mysql> Count total number of employees.^C
+mysql> SELECT COUNT(*) AS no_of_employee FROM employee;
++----------------+
+| no_of_employee |
++----------------+
+|             10 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> 
+
+```
 27. Find the average, min, and max salary across all employees.
+
+```sql
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> Find the average, min, and max salary across all employees.^C
+mysql> SELECT AVG(salary) AS average_salary_of_employee, MIN(salary) AS min_sal_of_employee, MAX(salary) AS max_sal_od_employee FROM employee;
++----------------------------+---------------------+---------------------+
+| average_salary_of_employee | min_sal_of_employee | max_sal_od_employee |
++----------------------------+---------------------+---------------------+
+|               67500.000000 |            55000.00 |            90000.00 |
++----------------------------+---------------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+
+```
+
+
 28. Find total salary expenditure per department.
+
+```sql
+
+mysql> DESC department;
++-----------+---------------+------+-----+---------+----------------+
+| Field     | Type          | Null | Key | Default | Extra          |
++-----------+---------------+------+-----+---------+----------------+
+| dept_id   | int           | NO   | PRI | NULL    | auto_increment |
+| dept_name | varchar(50)   | NO   | UNI | NULL    |                |
+| location  | varchar(50)   | YES  |     | NULL    |                |
+| budget    | decimal(15,2) | YES  |     | 0.00    |                |
++-----------+---------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM department;
++---------+--------------------------+-----------+------------+
+| dept_id | dept_name                | location  | budget     |
++---------+--------------------------+-----------+------------+
+|       1 | krispcall                | Kalopul   |   10000.00 |
+|       2 | Tivazo                   | baneswor  |   12221.23 |
+|       3 | Dialaxy                  | Chabahill | 1212121.12 |
+|       4 | Lumbinni medical College | lumbini   | 1752615.71 |
+|       5 | Entegra                  | Bagbazaar |  122233.98 |
++---------+--------------------------+-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> Find total salary expenditure per department.^C
+mysql> select * from employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> select dept_id, SUM(salary) as total_sal_exp FROM employee GROUP BY dept_id;
++---------+---------------+
+| dept_id | total_sal_exp |
++---------+---------------+
+|       1 |     272000.00 |
+|       2 |     203000.00 |
+|       3 |     200000.00 |
++---------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT d.dept_id,d.dept_name, SUM(salary) AS total_sal_exp FROM employee e JOIN department d ON e.dept_id = d.dept_id GROUP BY d,dept_id,d,dept_name;
+ERROR 1054 (42S22): Unknown column 'd' in 'group statement'
+mysql> SELECT d.dept_id,d.dept_name, SUM(e.salary) AS total_sal_exp FROM employee e JOIN department d ON e.deCpt_id = d.dept_id GROUP BY d.dept_id,d.dept_name;
+ERROR 1054 (42S22): Unknown column 'e.deCpt_id' in 'on clause'
+mysql> SELECT d.dept_id,d.dept_name, SUM(e.salary) AS total_sal_exp FROM employee e JOIN department d ON e.dept_id = d.dept_id GROUP BY d.dept_id,d.dept_name;
++---------+-----------+---------------+
+| dept_id | dept_name | total_sal_exp |
++---------+-----------+---------------+
+|       1 | krispcall |     272000.00 |
+|       2 | Tivazo    |     203000.00 |
+|       3 | Dialaxy   |     200000.00 |
++---------+-----------+---------------+
+3 rows in set (0.01 sec)
+
+mysql> 
+
+
+```
 29. Find the number of employees per department.
+
+```sql
+ysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT det_id, COUNT(*) AS no_of_empoyee FROM employee GROUP BY dept_id;
+ERROR 1054 (42S22): Unknown column 'det_id' in 'field list'
+mysql> SELECT dept_id, COUNT(*) AS no_of_empoyee FROM employee GROUP BY dept_id;
++---------+---------------+
+| dept_id | no_of_empoyee |
++---------+---------------+
+|       1 |             4 |
+|       2 |             3 |
+|       3 |             3 |
++---------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 30. Find departments where the average salary is above 80000 (use HAVING).
+
+```SQL
+mysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> Find departments where the average salary is above 80000 (use HAVING).^C
+mysql> SEELCT dept_id FROM employee WHERE AVG(salary) > 80000;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SEELCT dept_id FROM employee WHERE AVG(salary) > 80000' at line 1
+mysql> SELECT dept_id FROM employee HAVN AVG(salary) > 80000;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AVG(salary) > 80000' at line 1
+mysql> SELECT dept_id FROM employee HAVING(salary) > 80000;
+ERROR 1054 (42S22): Unknown column 'salary' in 'having clause'
+mysql> SELECT dept_id FROM employee HAVING AVG(salary) > 80000;
+ERROR 1140 (42000): In aggregated query without GROUP BY, expression #1 of SELECT list contains nonaggregated column 'company_db.employee.dept_id'; this is incompatible with sql_mode=only_full_group_by
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 80000;
+Empty set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 50000;
++---------+
+| dept_id |
++---------+
+|       1 |
+|       2 |
+|       3 |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 60000;
++---------+
+| dept_id |
++---------+
+|       1 |
+|       2 |
+|       3 |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 65000;
++---------+
+| dept_id |
++---------+
+|       1 |
+|       2 |
+|       3 |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 75000;
+Empty set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 70000;
+Empty set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 68000;
+Empty set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING AVG(salary) > 66000;
++---------+
+| dept_id |
++---------+
+|       1 |
+|       2 |
+|       3 |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING MAX(salary) > 90000;
+Empty set (0.00 sec)
+
+mysql> SELECT dept_id FROM employee GROUP BY dept_id HAVING MIN(salary) > 60000;
+Empty set (0.00 sec)
+
+mysql> 
+
+```
 
 ---
 
