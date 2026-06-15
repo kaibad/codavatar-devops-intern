@@ -1204,13 +1204,459 @@ mysql>
 ---
 
 ## JOINs
+
+**ref** https://youtu.be/lQBhzBhkGww?si=1jFMLQ5JBsQc7GXg
+
 31. INNER JOIN `employee` and `department` to show each employee's name and their department name.
+```SQL
+mysql> DESC employee;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| emp_id     | int          | NO   | PRI | NULL    | auto_increment |
+| first_name | varchar(100) | YES  |     | NULL    |                |
+| last_name  | varchar(100) | YES  |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
+| salary     | decimal(8,2) | YES  |     | NULL    |                |
+| dept_id    | int          | YES  | MUL | NULL    |                |
+| manager_id | int          | YES  | MUL | NULL    |                |
+| hire_date  | date         | YES  |     | NULL    |                |
+| is_active  | tinyint(1)   | YES  |     | 1       |                |
++------------+--------------+------+-----+---------+----------------+
+9 rows in set (0.00 sec)
+
+mysql> DESC department;
++-----------+---------------+------+-----+---------+----------------+
+| Field     | Type          | Null | Key | Default | Extra          |
++-----------+---------------+------+-----+---------+----------------+
+| dept_id   | int           | NO   | PRI | NULL    | auto_increment |
+| dept_name | varchar(50)   | NO   | UNI | NULL    |                |
+| location  | varchar(50)   | YES  |     | NULL    |                |
+| budget    | decimal(15,2) | YES  |     | 0.00    |                |
++-----------+---------------+------+-----+---------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> INNER JOIN `employee` and `department` to show each employee's name and their department name.
+    '> ^C
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e INNER JOIN department AS d;
++------------+-----------+--------------------------+
+| first_name | last_name | dept_name                |
++------------+-----------+--------------------------+
+| John       | Smith     | Tivazo                   |
+| John       | Smith     | Lumbinni medical College |
+| John       | Smith     | krispcall                |
+| John       | Smith     | Entegra                  |
+| John       | Smith     | Dialaxy                  |
+| Sarah      | Johnson   | Tivazo                   |
+| Sarah      | Johnson   | Lumbinni medical College |
+| Sarah      | Johnson   | krispcall                |
+| Sarah      | Johnson   | Entegra                  |
+| Sarah      | Johnson   | Dialaxy                  |
+| Michael    | Brown     | Tivazo                   |
+| Michael    | Brown     | Lumbinni medical College |
+| Michael    | Brown     | krispcall                |
+| Michael    | Brown     | Entegra                  |
+| Michael    | Brown     | Dialaxy                  |
+| Emily      | Davis     | Tivazo                   |
+| Emily      | Davis     | Lumbinni medical College |
+| Emily      | Davis     | krispcall                |
+| Emily      | Davis     | Entegra                  |
+| Emily      | Davis     | Dialaxy                  |
+| David      | Wilson    | Tivazo                   |
+| David      | Wilson    | Lumbinni medical College |
+| David      | Wilson    | krispcall                |
+| David      | Wilson    | Entegra                  |
+| David      | Wilson    | Dialaxy                  |
+| Jessica    | Miller    | Tivazo                   |
+| Jessica    | Miller    | Lumbinni medical College |
+| Jessica    | Miller    | krispcall                |
+| Jessica    | Miller    | Entegra                  |
+| Jessica    | Miller    | Dialaxy                  |
+| Daniel     | Moore     | Tivazo                   |
+| Daniel     | Moore     | Lumbinni medical College |
+| Daniel     | Moore     | krispcall                |
+| Daniel     | Moore     | Entegra                  |
+| Daniel     | Moore     | Dialaxy                  |
+| Ashley     | Taylor    | Tivazo                   |
+| Ashley     | Taylor    | Lumbinni medical College |
+| Ashley     | Taylor    | krispcall                |
+| Ashley     | Taylor    | Entegra                  |
+| Ashley     | Taylor    | Dialaxy                  |
+| Matthew    | Anderson  | Tivazo                   |
+| Matthew    | Anderson  | Lumbinni medical College |
+| Matthew    | Anderson  | krispcall                |
+| Matthew    | Anderson  | Entegra                  |
+| Matthew    | Anderson  | Dialaxy                  |
+| Olivia     | Thomas    | Tivazo                   |
+| Olivia     | Thomas    | Lumbinni medical College |
+| Olivia     | Thomas    | krispcall                |
+| Olivia     | Thomas    | Entegra                  |
+| Olivia     | Thomas    | Dialaxy                  |
++------------+-----------+--------------------------+
+50 rows in set (0.01 sec)
+
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e INNER JOIN department AS d ON employee.dept_id = department.dept_id;
+ERROR 1054 (42S22): Unknown column 'employee.dept_id' in 'on clause'
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e INNER JOIN department AS d ON e.dept_id = d.dept_id;
++------------+-----------+-----------+
+| first_name | last_name | dept_name |
++------------+-----------+-----------+
+| John       | Smith     | krispcall |
+| Sarah      | Johnson   | Tivazo    |
+| Michael    | Brown     | Dialaxy   |
+| Emily      | Davis     | krispcall |
+| David      | Wilson    | krispcall |
+| Jessica    | Miller    | Tivazo    |
+| Daniel     | Moore     | Tivazo    |
+| Ashley     | Taylor    | Dialaxy   |
+| Matthew    | Anderson  | Dialaxy   |
+| Olivia     | Thomas    | krispcall |
++------------+-----------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e INNER JOIN department AS d ON e.dept_id = d.dept_id SORT BY dept_name;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SORT BY dept_name' at line 1
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e INNER JOIN department AS d ON e.dept_id = d.dept_id ORDER BY d.dept_name ASC;
++------------+-----------+-----------+
+| first_name | last_name | dept_name |
++------------+-----------+-----------+
+| Michael    | Brown     | Dialaxy   |
+| Ashley     | Taylor    | Dialaxy   |
+| Matthew    | Anderson  | Dialaxy   |
+| John       | Smith     | krispcall |
+| Emily      | Davis     | krispcall |
+| David      | Wilson    | krispcall |
+| Olivia     | Thomas    | krispcall |
+| Sarah      | Johnson   | Tivazo    |
+| Jessica    | Miller    | Tivazo    |
+| Daniel     | Moore     | Tivazo    |
++------------+-----------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> 
+
+
+```
+
 32. LEFT JOIN to show all employees including those with no department assigned.
+
+```sql
+mysql> 
+mysql> LEFT JOIN to show all employees including those with no department assigned.^C
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e LEFT JOIN department AS d ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> SELECT e.first_name,e.last_name,d.dept_name FROM employee AS e LEFT JOIN department AS d ON e.dept_id=d.dept_id;
++------------+-----------+-----------+
+| first_name | last_name | dept_name |
++------------+-----------+-----------+
+| John       | Smith     | krispcall |
+| Sarah      | Johnson   | Tivazo    |
+| Michael    | Brown     | Dialaxy   |
+| Emily      | Davis     | krispcall |
+| David      | Wilson    | krispcall |
+| Jessica    | Miller    | Tivazo    |
+| Daniel     | Moore     | Tivazo    |
+| Ashley     | Taylor    | Dialaxy   |
+| Matthew    | Anderson  | Dialaxy   |
+| Olivia     | Thomas    | krispcall |
++------------+-----------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> 
+
+
+```
 33. RIGHT JOIN to show all departments including those with no employees.
+
+```SQL
+mysql> SELECT e.first_name,d.dept_name FROM employee AS e RIGHT JOIN department as d ON e.dept_id = d.dept_id;
++------------+--------------------------+
+| first_name | dept_name                |
++------------+--------------------------+
+| Michael    | Dialaxy                  |
+| Ashley     | Dialaxy                  |
+| Matthew    | Dialaxy                  |
+| NULL       | Entegra                  |
+| John       | krispcall                |
+| Emily      | krispcall                |
+| David      | krispcall                |
+| Olivia     | krispcall                |
+| NULL       | Lumbinni medical College |
+| Sarah      | Tivazo                   |
+| Jessica    | Tivazo                   |
+| Daniel     | Tivazo                   |
++------------+--------------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from department;
++---------+--------------------------+-----------+------------+
+| dept_id | dept_name                | location  | budget     |
++---------+--------------------------+-----------+------------+
+|       1 | krispcall                | Kalopul   |   10000.00 |
+|       2 | Tivazo                   | baneswor  |   12221.23 |
+|       3 | Dialaxy                  | Chabahill | 1212121.12 |
+|       4 | Lumbinni medical College | lumbini   | 1752615.71 |
+|       5 | Entegra                  | Bagbazaar |  122233.98 |
++---------+--------------------------+-----------+------------+
+5 rows in set (0.01 sec)
+
+mysql> 
+
+
+```
 34. Self JOIN to show each employee alongside their manager's name.
+```sql
+mysql> SELECT CONCATE(e.first_name, ' ', e.last_name) AS employee_name
+    -> CONCATE(m.first_name, ' ', m.last_name) AS manager_name
+    -> FROM employee as e
+    -> LEFT JOIN employee as m
+    -> ON e.manager_id = m.emp_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONCATE(m.first_name, ' ', m.last_name) AS manager_name
+FROM employee as e
+LEFT ' at line 2
+mysql> SELECT CONCATE(e.first_name, ' ', e.last_name) AS employee_name, CONCATE(m.first_name, ' ', m.last_name) AS manager_name FROM employee as e LEFT JOIN employee as m ON e.manager_id = m.emp_id;
+ERROR 1305 (42000): FUNCTION company_db.CONCATE does not exist
+mysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name, CONCAT(m.first_name, ' ', m.last_name) AS manager_name FROM employee as e LEFT JOIN employee as m ON e.manager_id = m.emp_id;
++------------------+---------------+
+| employee_name    | manager_name  |
++------------------+---------------+
+| John Smith       | NULL          |
+| Sarah Johnson    | NULL          |
+| Michael Brown    | NULL          |
+| Emily Davis      | John Smith    |
+| David Wilson     | John Smith    |
+| Jessica Miller   | Sarah Johnson |
+| Daniel Moore     | Sarah Johnson |
+| Ashley Taylor    | Michael Brown |
+| Matthew Anderson | Michael Brown |
+| Olivia Thomas    | John Smith    |
++------------------+---------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+    ->     COALESCE(
+    ->         CONCAT(m.first_name, ' ', m.last_name),
+    ->         'No Manager'
+    ->     ) AS manager_name
+    -> FROM employee AS e
+    -> LEFT JOIN employee AS m
+    -> ON e.manager_id = m.emp_id;
++------------------+---------------+
+| employee_name    | manager_name  |
++------------------+---------------+
+| John Smith       | No Manager    |
+| Sarah Johnson    | No Manager    |
+| Michael Brown    | No Manager    |
+| Emily Davis      | John Smith    |
+| David Wilson     | John Smith    |
+| Jessica Miller   | Sarah Johnson |
+| Daniel Moore     | Sarah Johnson |
+| Ashley Taylor    | Michael Brown |
+| Matthew Anderson | Michael Brown |
+| Olivia Thomas    | John Smith    |
++------------------+---------------+
+10 rows in set (0.00 sec)
+
+mysql> 
+
+
+```
+
 35. 3-table JOIN: show employee name, department name, and the project they work on.
+
+```SQL
+mysql> SELECT CONCAT(e.first_name, ' ', e.last_name),d.dept_name,p.project_name
+    -> FROM employee e JOIN works_on w ON e.emp_id = w.emp_id
+    -> JOIN project p ON p.project_id = w.project_id
+    -> JOIN department d ON p.dept_id = d.dept_id;
++----------------------------------------+-----------+------------------+
+| CONCAT(e.first_name, ' ', e.last_name) | dept_name | project_name     |
++----------------------------------------+-----------+------------------+
+| John Smith                             | krispcall | ERP Upgrade      |
+| Emily Davis                            | krispcall | ERP Upgrade      |
+| David Wilson                           | krispcall | ERP Upgrade      |
+| Sarah Johnson                          | Tivazo    | Mobile App       |
+| Jessica Miller                         | Tivazo    | Mobile App       |
+| Daniel Moore                           | Tivazo    | Mobile App       |
+| Sarah Johnson                          | Dialaxy   | Data Warehouse   |
+| Michael Brown                          | Dialaxy   | Data Warehouse   |
+| Ashley Taylor                          | Dialaxy   | Data Warehouse   |
+| Emily Davis                            | krispcall | Website Redesign |
+| Jessica Miller                         | krispcall | Website Redesign |
+| Olivia Thomas                          | krispcall | Website Redesign |
+| John Smith                             | Dialaxy   | Cloud Migration  |
+| Michael Brown                          | Dialaxy   | Cloud Migration  |
+| Matthew Anderson                       | Dialaxy   | Cloud Migration  |
+| Olivia Thomas                          | Dialaxy   | Cloud Migration  |
++----------------------------------------+-----------+------------------+
+16 rows in set (0.01 sec)
+
+mysql> SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name,d.dept_name,p.project_name FROM employee e JOIN wor
+ks_on w ON e.emp_id = w.emp_id JOIN project p ON p.project_id = w.project_id JOIN department d ON p.dept_id = d.dept_id;
++------------------+-----------+------------------+
+| employee_name    | dept_name | project_name     |
++------------------+-----------+------------------+
+| John Smith       | krispcall | ERP Upgrade      |
+| Emily Davis      | krispcall | ERP Upgrade      |
+| David Wilson     | krispcall | ERP Upgrade      |
+| Sarah Johnson    | Tivazo    | Mobile App       |
+| Jessica Miller   | Tivazo    | Mobile App       |
+| Daniel Moore     | Tivazo    | Mobile App       |
+| Sarah Johnson    | Dialaxy   | Data Warehouse   |
+| Michael Brown    | Dialaxy   | Data Warehouse   |
+| Ashley Taylor    | Dialaxy   | Data Warehouse   |
+| Emily Davis      | krispcall | Website Redesign |
+| Jessica Miller   | krispcall | Website Redesign |
+| Olivia Thomas    | krispcall | Website Redesign |
+| John Smith       | Dialaxy   | Cloud Migration  |
+| Michael Brown    | Dialaxy   | Cloud Migration  |
+| Matthew Anderson | Dialaxy   | Cloud Migration  |
+| Olivia Thomas    | Dialaxy   | Cloud Migration  |
++------------------+-----------+------------------+
+16 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name,d.dept_name,p.project_name FROM employee e JOIN works_on w ON e.emp_id = w.emp_id JOIN project p ON p.project_id = w.project_id JOIN department d ON p.dept_id = d.dept_id ORDER BY d.dept_name ASC;
++------------------+-----------+------------------+
+| employee_name    | dept_name | project_name     |
++------------------+-----------+------------------+
+| Sarah Johnson    | Dialaxy   | Data Warehouse   |
+| Michael Brown    | Dialaxy   | Data Warehouse   |
+| Ashley Taylor    | Dialaxy   | Data Warehouse   |
+| John Smith       | Dialaxy   | Cloud Migration  |
+| Michael Brown    | Dialaxy   | Cloud Migration  |
+| Matthew Anderson | Dialaxy   | Cloud Migration  |
+| Olivia Thomas    | Dialaxy   | Cloud Migration  |
+| John Smith       | krispcall | ERP Upgrade      |
+| Emily Davis      | krispcall | ERP Upgrade      |
+| David Wilson     | krispcall | ERP Upgrade      |
+| Emily Davis      | krispcall | Website Redesign |
+| Jessica Miller   | krispcall | Website Redesign |
+| Olivia Thomas    | krispcall | Website Redesign |
+| Sarah Johnson    | Tivazo    | Mobile App       |
+| Jessica Miller   | Tivazo    | Mobile App       |
+| Daniel Moore     | Tivazo    | Mobile App       |
++------------------+-----------+------------------+
+16 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 36. JOIN with aggregate: show total hours logged per employee across all projects.
+
+```sql
+mysql> JOIN with aggregate: show total hours logged per employee across all projects.^C
+mysql> SELECT * FROM employee;
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+| emp_id | first_name | last_name | email                        | salary   | dept_id | manager_id | hire_date  | is_active |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+|      1 | John       | Smith     | john.smith@codavatar.tech    | 90000.00 |       1 |       NULL | 2020-01-15 |         1 |
+|      2 | Sarah      | Johnson   | sarah.johnson@company.com    | 85000.00 |       2 |       NULL | 2020-03-20 |         1 |
+|      3 | Michael    | Brown     | michael.brown@company.com    | 80000.00 |       3 |       NULL | 2021-02-10 |         1 |
+|      4 | Emily      | Davis     | emily.davis@company.com      | 65000.00 |       1 |          1 | 2021-06-01 |         1 |
+|      5 | David      | Wilson    | david.wilson@company.com     | 62000.00 |       1 |          1 | 2021-08-15 |         1 |
+|      6 | Jessica    | Miller    | jessica.miller@company.com   | 60000.00 |       2 |          2 | 2022-01-12 |         1 |
+|      7 | Daniel     | Moore     | daniel.moore@company.com     | 58000.00 |       2 |          2 | 2022-04-18 |         1 |
+|      8 | Ashley     | Taylor    | ashley.taylor@company.com    | 61000.00 |       3 |          3 | 2022-07-22 |         1 |
+|      9 | Matthew    | Anderson  | matthew.anderson@company.com | 59000.00 |       3 |          3 | 2023-01-09 |         1 |
+|     10 | Olivia     | Thomas    | olivia.thomas@company.com    | 55000.00 |       1 |          1 | 2023-05-11 |         1 |
++--------+------------+-----------+------------------------------+----------+---------+------------+------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT CONCATE(e.first_name, ' ',e.last_name ) AS employee_name, d.dept_name, SUM(w.hours) AS total_hours
+    -> FROM employee e
+    -> JOIN works_on w ON e.emp_id = w.emp_id
+    -> JOIN department d
+    -> ON e.dept_id =  d.dept_id
+    -> GROUP BY e.emp_id,e.first_name,e.last_name,d.dept_name;
+ERROR 1305 (42000): FUNCTION company_db.CONCATE does not exist
+mysql> SELECT CONCAT(e.first_name, ' ',e.last_name ) AS employee_name, d.dept_name, SUM(w.hours) AS total_hours FROM employee e JOIN works_on w ON e.emp_id = w.emp_id JOIN department d ON e.dept_id =  d.dept_id GROUP BY e.emp_id,e.first_name,e.last_name,d.dept_name;
++------------------+-----------+-------------+
+| employee_name    | dept_name | total_hours |
++------------------+-----------+-------------+
+| John Smith       | krispcall |       65.00 |
+| Sarah Johnson    | Tivazo    |       55.00 |
+| Michael Brown    | Dialaxy   |       75.00 |
+| Emily Davis      | krispcall |       45.00 |
+| David Wilson     | krispcall |       25.00 |
+| Jessica Miller   | Tivazo    |       50.00 |
+| Daniel Moore     | Tivazo    |       20.00 |
+| Ashley Taylor    | Dialaxy   |       35.00 |
+| Matthew Anderson | Dialaxy   |       40.00 |
+| Olivia Thomas    | krispcall |       40.00 |
++------------------+-----------+-------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(e.first_name, ' ',e.last_name ) AS employee_name, d.dept_name, SUM(w.hours) AS total_hours FROM employee e JOIN works_on w ON e.emp_id = w.emp_id JOIN department d ON e.dept_id =  d.dept_id GROUP BY e.emp_id,e.first_name,e.last_name,d.dept_name ORDER BY total_hours;
++------------------+-----------+-------------+
+| employee_name    | dept_name | total_hours |
++------------------+-----------+-------------+
+| Daniel Moore     | Tivazo    |       20.00 |
+| David Wilson     | krispcall |       25.00 |
+| Ashley Taylor    | Dialaxy   |       35.00 |
+| Matthew Anderson | Dialaxy   |       40.00 |
+| Olivia Thomas    | krispcall |       40.00 |
+| Emily Davis      | krispcall |       45.00 |
+| Jessica Miller   | Tivazo    |       50.00 |
+| Sarah Johnson    | Tivazo    |       55.00 |
+| John Smith       | krispcall |       65.00 |
+| Michael Brown    | Dialaxy   |       75.00 |
++------------------+-----------+-------------+
+10 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
 37. JOIN with aggregate: show headcount, avg salary, max salary per department.
+
+```sql
+mysql> JOIN with aggregate: show headcount, avg salary, max salary per department.^C
+mysql> SELECT d.dept_name,
+    -> COUNT(e.emp_id) AS headcount
+    -> AVG(e.salary) AS avg_salary
+    -> MAX(e.salary) AS max_salary
+    -> FROM department d
+    -> LEFT JOIN employee e ON d.dept_id = e.dept_id
+    -> GROUP BY e.dept_id, d.dept_name;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AVG(e.salary) AS avg_salary
+MAX(e.salary) AS max_salary
+FROM department d
+LEFT J' at line 3
+mysql> SELECT d.dept_name, COUNT(e.emp_id) AS headcount, AVG(e.salary) AS avg_salary, MAX(e.salary) AS max_salary FROM department d LEFT JOIN employee e ON d.dept_id = e.dept_id GROUP BY e.dept_id, d.dept_name;
++--------------------------+-----------+--------------+------------+
+| dept_name                | headcount | avg_salary   | max_salary |
++--------------------------+-----------+--------------+------------+
+| Dialaxy                  |         3 | 66666.666667 |   80000.00 |
+| Entegra                  |         0 |         NULL |       NULL |
+| krispcall                |         4 | 68000.000000 |   90000.00 |
+| Lumbinni medical College |         0 |         NULL |       NULL |
+| Tivazo                   |         3 | 67666.666667 |   85000.00 |
++--------------------------+-----------+--------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+
+
+```
 
 ---
 
@@ -1234,19 +1680,6 @@ mysql>
 
 ## UPDATE & DELETE
 48. Give all employees in a specific department a 10% salary raise.
-Insert 5 departments with different locations and budgets.
-12. Insert 10 employees — make sure some have `manager_id` pointing to existing employees.
-13. Insert 5 projects and assign employees to projects via `works_on`.
-
----
-
-## SELECT — Basic
-14. Select all columns from `employee`.
-15. Select only `first_name`, `last_name`, and `salary` with column aliases.
-16. Select all employees sorted by salary descending.
-17. Select the top 3 highest paid employees.
-18. Select all distinct salary values.
-
 49. Soft-delete an employee by setting `is_active` to false.
 50. Hard-delete all inactive employees (handle FK constraint on `works_on` first).
 
