@@ -32,8 +32,8 @@ volumes:
 docker compose -f week4_databases/postgresql-compose.yml up -d
 ```
 
-![Postgres with docker compose](../images/screenshots/week3/postgres-1.png)
-![Postgres with docker compose](../images/screenshots/week3/postgres-2.png)
+![Postgres with docker compose](../images/screenshots/week4/postgres-1.png)
+![Postgres with docker compose](../images/screenshots/week4/postgres-2.png)
 
 
 
@@ -84,10 +84,10 @@ volumes:
 **password** kailash
 
 
-![Postgres with docker compose](../images/screenshots/week3/postgres-3.png)
+![Postgres with docker compose](../images/screenshots/week4/postgres-3.png)
 
 **pgadmin dashboard**
-![Pgadmin dashboard](../images/screenshots/week3/postgres-4.png)
+![Pgadmin dashboard](../images/screenshots/week4/postgres-4.png)
 
 
 ## using env vars in docker compose
@@ -97,4 +97,4 @@ vim week4_databases/.env
 
 
 ```
-![env vars with docker compose](../images/screenshots/week3/postgres-5.png)
+![env vars with docker compose](../images/screenshots/week4/postgres-5.png)
