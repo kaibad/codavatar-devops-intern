@@ -171,3 +171,168 @@ With volumes: database behaves like a real production system.
 | Visibility               | Easy (visible in your folder)                 | Hidden (`/var/lib/docker/volumes/`)       |
 | Risk                     | Higher (accidental deletion/modification)     | Lower (safer managed storage)             |
 
+
+
+
+# 3. Create one PostgreSQL table and insert/select/update/delete data.
+
+PostgreSQL Practice Questions for DevOps Engineers
+
+
+## Section 1 — DDL: Create Tables
+
+**Q1.** Create a `servers` table with the following columns:
+- `id` — auto-incrementing primary key
+- `hostname` — up to 100 chars, not null, must be unique
+- `ip_address` — up to 15 chars
+- `environment` — only allows values `dev`, `staging`, or `prod` (use a CHECK constraint)
+- `region` — up to 30 chars
+- `is_active` — boolean, defaults to `TRUE`
+- `created_at` — timestamp with timezone, defaults to current time
+
+**Q2.** Create a `services` table with:
+- `id` — auto-incrementing primary key
+- `name` — up to 100 chars, not null
+- `version` — up to 20 chars
+- `server_id` — foreign key referencing `servers(id)`, set to NULL if the server is deleted
+- `status` — only allows `running`, `stopped`, or `failed`; defaults to `running`
+- `port` — integer
+- `deployed_at` — timestamp with timezone, defaults to current time
+
+**Q3.** Create a `deployments` table with:
+- `id` — auto-incrementing primary key
+- `service_id` — foreign key referencing `services(id)`, cascade delete if service is removed
+- `deployed_by` — up to 100 chars
+- `image_tag` — up to 100 chars
+- `success` — boolean
+- `duration_sec` — integer
+- `deployed_at` — timestamp with timezone, defaults to current time
+
+**Q4.** Create an `alerts` table with:
+- `id` — auto-incrementing primary key
+- `server_id` — foreign key referencing `servers(id)`
+- `severity` — only allows `info`, `warning`, or `critical`
+- `message` — text
+- `resolved` — boolean, defaults to `FALSE`
+- `created_at` — timestamp with timezone, defaults to current time
+
+**Q5.** Create a `logs` table with:
+- `id` — big auto-incrementing primary key (`BIGSERIAL`)
+- `server_id` — foreign key referencing `servers(id)`
+- `level` — only allows `DEBUG`, `INFO`, `WARN`, or `ERROR`
+- `message` — text
+- `metadata` — JSONB column for structured log data
+- `logged_at` — timestamp with timezone, defaults to current time
+
+---
+
+## Section 2 — INSERT
+
+**Q6.** Insert three servers in a single statement:
+- `web-prod-01`, IP `10.0.1.10`, environment `prod`, region `us-east-1`
+- `api-staging-01`, IP `10.0.2.20`, environment `staging`, region `us-west-2`
+- `db-dev-01`, IP `10.0.3.30`, environment `dev`, region `eu-west-1`
+
+**Q7.** Insert a service called `nginx` version `1.25.3` on server `web-prod-01`. Look up the server's `id` using a subquery inside the INSERT — do not hardcode the ID.
+
+**Q8.** Insert a deployment record for service ID `1`, deployed by `jenkins`, image tag `v2.1.0`, it succeeded and took `142` seconds. Use `RETURNING id, deployed_at` to confirm the insert.
+
+**Q9.** Insert a `critical` alert for server `web-prod-01` with message `Disk usage exceeded 90%`. Use a subquery to get the server ID.
+
+**Q10.** Insert a log entry for server ID `1` with level `ERROR`, message `OOM killed`, and a JSONB `metadata` field containing `{"pod": "api-pod-3", "namespace": "production", "exit_code": 137}`.
+
+---
+
+## Section 3 — SELECT & Filtering
+
+**Q11.** Retrieve `hostname`, `ip_address`, and `environment` for all active `prod` servers.
+
+**Q12.** Find all services that are currently in `failed` status. Show service name, version, and the `deployed_at` timestamp.
+
+**Q13.** List all deployments that failed (`success = FALSE`) and took longer than `120` seconds, ordered by `duration_sec` descending.
+
+**Q14.** Find all alerts created in the last 24 hours that are not yet resolved.
+
+**Q15.** Search logs for entries where the message contains the word `timeout` (case-insensitive). Show `level`, `message`, and `logged_at`.
+
+---
+
+## Section 4 — JOINs
+
+**Q16.** List every service along with the hostname and environment of the server it runs on. Use an `INNER JOIN`. Include service `name`, `status`, server `hostname`, and `environment`.
+
+**Q17.** Show all servers and any services deployed on them. Include servers that have **no services** (use a `LEFT JOIN`). Display `hostname`, `environment`, and service `name` (NULL if none).
+
+**Q18.** List all deployments with the service name, the server hostname, and who deployed it. This requires joining `deployments → services → servers`.
+
+**Q19.** Find all services that have **never had a deployment**. Use a `LEFT JOIN` between `services` and `deployments` and filter for NULLs.
+
+**Q20.** Show every server alongside its unresolved alert count. Include servers with zero alerts (use `LEFT JOIN` + `GROUP BY`). Order by alert count descending.
+
+**Q21.** List all `critical` alerts together with the server `hostname`, `ip_address`, and the service `name` running on that server. Join `alerts → servers → services`.
+
+---
+
+## Section 5 — Aggregation & GROUP BY
+
+**Q22.** Count the total number of servers per environment (`dev`, `staging`, `prod`).
+
+**Q23.** For each service, show the total number of deployments, how many succeeded, and how many failed. Use conditional aggregation (`COUNT + CASE WHEN`).
+
+**Q24.** Find the average deployment duration per service. Only include services that have had at least `3` deployments. Use `HAVING`.
+
+**Q25.** Show the server with the highest number of `ERROR` level log entries. Return only the top 1 result.
+
+**Q26.** List each region along with the count of active servers and the count of distinct environments in that region.
+
+---
+
+## Section 6 — UPDATE
+
+**Q27.** Mark all services on `db-dev-01` as `stopped`. Use a subquery to find the server ID.
+
+**Q28.** Set `resolved = TRUE` for all `warning` alerts older than 7 days.
+
+**Q29.** Bump the version of service `nginx` to `1.26.0` and update its `deployed_at` to `NOW()` in a single `UPDATE` statement.
+
+**Q30.** For every server in the `dev` environment, set `is_active = FALSE`. Use `RETURNING hostname` to confirm which rows were affected.
+
+---
+
+## Section 7 — DELETE
+
+**Q31.** Delete all `DEBUG` level logs older than 30 days to simulate a log rotation job.
+
+**Q32.** Delete all deployments linked to services that are currently in `failed` status. Use a subquery.
+
+**Q33.** Delete the server with hostname `db-dev-01`. Observe what happens to services that had `server_id` referencing it — explain why based on the constraint you defined in Q2.
+
+---
+
+## Section 8 — Indexes, Views & Transactions
+
+**Q34.** Create a partial index on the `alerts` table that only indexes unresolved critical alerts (`resolved = FALSE AND severity = 'critical'`). Think about why a partial index is more efficient than a full index here.
+
+**Q35.** Create a view called `prod_service_health` that shows:
+- Server `hostname`
+- Service `name` and `status`
+- Latest deployment's `image_tag` and `success` flag
+- Total unresolved alerts for that server
+
+Then write a SELECT against the view to find all services in `failed` status.
+
+---
+
+## Bonus — Transaction Block
+
+Write a transaction that does all of the following atomically:
+1. Inserts a new server `cache-prod-01` in `prod`, region `us-east-1`
+2. Inserts a `redis` service on that server (use the new server's ID — no hardcoding)
+3. Inserts a successful deployment for that service with image tag `redis:7.2`
+4. Rolls back everything if any step fails
+
+```sql
+BEGIN;
+  -- your statements here
+COMMIT;
+```
