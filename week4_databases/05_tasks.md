@@ -259,19 +259,20 @@ PostgreSQL Practice Questions for DevOps Engineers
 ## Section 3 — SELECT & Filtering
 
 **Q11.** Retrieve `hostname`, `ip_address`, and `environment` for all active `prod` servers.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-11.png)
 
 **Q12.** Find all services that are currently in `failed` status. Show service name, version, and the `deployed_at` timestamp.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-12.png)
 
 **Q13.** List all deployments that failed (`success = FALSE`) and took longer than `120` seconds, ordered by `duration_sec` descending.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-13.png)
 
 **Q14.** Find all alerts created in the last 24 hours that are not yet resolved.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-14.png)
 
-![servers table](../images/screenshots/week4/q-1.png)
 **Q15.** Search logs for entries where the message contains the word `timeout` (case-insensitive). Show `level`, `message`, and `logged_at`.
+![servers table](../images/screenshots/week4/q-15.png)
+
 
 ---
 
