@@ -240,19 +240,19 @@ PostgreSQL Practice Questions for DevOps Engineers
 - `web-prod-01`, IP `10.0.1.10`, environment `prod`, region `us-east-1`
 - `api-staging-01`, IP `10.0.2.20`, environment `staging`, region `us-west-2`
 - `db-dev-01`, IP `10.0.3.30`, environment `dev`, region `eu-west-1`
-![servers table](../images/screenshots/week4/q-1.png)
+![Insert into servers table](../images/screenshots/week4/q-6.png)
 
 **Q7.** Insert a service called `nginx` version `1.25.3` on server `web-prod-01`. Look up the server's `id` using a subquery inside the INSERT — do not hardcode the ID.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-7.png)
 
 **Q8.** Insert a deployment record for service ID `1`, deployed by `jenkins`, image tag `v2.1.0`, it succeeded and took `142` seconds. Use `RETURNING id, deployed_at` to confirm the insert.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-8.png)
 
 **Q9.** Insert a `critical` alert for server `web-prod-01` with message `Disk usage exceeded 90%`. Use a subquery to get the server ID.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-9.png)
 
 **Q10.** Insert a log entry for server ID `1` with level `ERROR`, message `OOM killed`, and a JSONB `metadata` field containing `{"pod": "api-pod-3", "namespace": "production", "exit_code": 137}`.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-10.png)
 
 ---
 
