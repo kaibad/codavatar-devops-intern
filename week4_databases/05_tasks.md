@@ -381,17 +381,20 @@ task4=#
 
 ## Section 6 — UPDATE
 
+**ref**: https://www.w3schools.com/postgresql/postgresql_update.php
+
+
 **Q27.** Mark all services on `db-dev-01` as `stopped`. Use a subquery to find the server ID.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-27.png)
 
 **Q28.** Set `resolved = TRUE` for all `warning` alerts older than 7 days.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-28.png)
 
 **Q29.** Bump the version of service `nginx` to `1.26.0` and update its `deployed_at` to `NOW()` in a single `UPDATE` statement.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-29.png)
 
 **Q30.** For every server in the `dev` environment, set `is_active = FALSE`. Use `RETURNING hostname` to confirm which rows were affected.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-30.png)
 
 ---
 
