@@ -301,19 +301,81 @@ PostgreSQL Practice Questions for DevOps Engineers
 ## Section 5 — Aggregation & GROUP BY
 
 **Q22.** Count the total number of servers per environment (`dev`, `staging`, `prod`).
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-22.png)
 
 **Q23.** For each service, show the total number of deployments, how many succeeded, and how many failed. Use conditional aggregation (`COUNT + CASE WHEN`).
-![servers table](../images/screenshots/week4/q-1.png)
+
+```SQL
+task4=# For each service, show the total number of deployments, how many succeeded, and how many failed. Use conditional aggregation (`COUNT + CASE WHEN`).
+task4-# 
+task4=# SELECT * FROM services;
+ id |   name   | version | server_id | status  | port |          deployed_at          
+----+----------+---------+-----------+---------+------+-------------------------------
+  1 | nginx    | 1.25.3  |         1 | running |   80 | 2026-06-17 03:21:32.881805+00
+  2 | nginx    | 1.25.3  |         1 | running |   80 | 2026-06-17 03:54:01.772098+00
+  3 | apache   | 2.4.58  |         2 | stopped | 8080 | 2026-06-17 03:54:01.772098+00
+  4 | postgres | 16.2    |         3 | failed  | 5432 | 2026-06-17 03:54:01.772098+00
+(4 rows)
+
+task4=# selecct * from deployments;
+ERROR:  syntax error at or near "selecct"
+LINE 1: selecct * from deployments;
+        ^
+task4=# select * from deployments;
+ id | service_id |  deployed_by   | image_tag | success | duration_sec |          deployed_at          
+----+------------+----------------+-----------+---------+--------------+-------------------------------
+  1 |          1 | jenkins        | v2.1.0    | t       |          142 | 2026-06-17 03:30:52.289168+00
+  2 |          1 | jenkins        | v2.1.0    | f       |          180 | 2026-06-17 04:09:36.819063+00
+  3 |          2 | gitlab-ci      | v1.5.0    | f       |          250 | 2026-06-17 04:09:36.819063+00
+  4 |          3 | jenkins        | v3.0.1    | f       |          320 | 2026-06-17 04:09:36.819063+00
+  5 |          1 | github-actions | v2.2.0    | t       |           90 | 2026-06-17 04:09:36.819063+00
+  6 |          2 | jenkins        | v1.6.0    | t       |          140 | 2026-06-17 04:09:36.819063+00
+(6 rows)
+
+task4=# SELECT s.name, COUNT(d.id) AS total_number_of_deployments  FROM serv
+servers          servers_id_seq   services         services_id_seq 
+task4=# SELECT s.name, COUNT(d.id) AS total_number_of_deployments  FROM services s INNER JOIN deployments AS d ON s.id = d.service_id;
+ERROR:  column "s.name" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT s.name, COUNT(d.id) AS total_number_of_deployments  F...
+               ^
+task4=# SELECT s.name, COUNT(d.id) AS total_number_of_deployments  FROM services s INNER JOIN deployments AS d ON s.id = d.service_id GROUP BY s.name;
+  name  | total_number_of_deployments 
+--------+-----------------------------
+ apache |                           1
+ nginx  |                           5
+(2 rows)
+
+task4=# SELECT s.id, s.name, COUNT(d.id) AS total_number_of_deployments, COUNT (CASE WHEN d.success = true THEN 1 END) AS succeful_deployments, COUNT (CASE WHEN d.success =
+false THEN 1 END) AS failed_deploymenrs  FROM services s INNER JOIN deployments AS d ON s.id = d.service_id GROUP BY s.id,s.name ORDER BY s.id;
+ id |  name  | total_number_of_deployments | succeful_deployments | failed_deploymenrs 
+----+--------+-----------------------------+----------------------+--------------------
+  1 | nginx  |                           3 |                    2 |                  1
+  2 | nginx  |                           2 |                    1 |                  1
+  3 | apache |                           1 |                    0 |                  1
+(3 rows)
+
+task4=# SELECT s.id, s.name, COUNT(d.id) AS total_number_of_deployments, COUNT (CASE WHEN d.success = true THEN 1 END) AS succeful_deployments, COUNT (CASE WHEN d.success =
+false THEN 1 END) AS failed_deploymenrs  FROM services s LEFT JOIN deployments AS d ON s.id = d.service_id GROUP BY s.id,s.name ORDER BY s.id;
+ id |   name   | total_number_of_deployments | succeful_deployments | failed_deploymenrs 
+----+----------+-----------------------------+----------------------+--------------------
+  1 | nginx    |                           3 |                    2 |                  1
+  2 | nginx    |                           2 |                    1 |                  1
+  3 | apache   |                           1 |                    0 |                  1
+  4 | postgres |                           0 |                    0 |                  0
+(4 rows)
+
+task4=# 
+
+```
 
 **Q24.** Find the average deployment duration per service. Only include services that have had at least `3` deployments. Use `HAVING`.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-24.png)
 
 **Q25.** Show the server with the highest number of `ERROR` level log entries. Return only the top 1 result.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-25.png)
 
 **Q26.** List each region along with the count of active servers and the count of distinct environments in that region.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-26.png)
 
 ---
 
