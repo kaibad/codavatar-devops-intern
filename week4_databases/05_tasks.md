@@ -279,22 +279,22 @@ PostgreSQL Practice Questions for DevOps Engineers
 ## Section 4 — JOINs
 
 **Q16.** List every service along with the hostname and environment of the server it runs on. Use an `INNER JOIN`. Include service `name`, `status`, server `hostname`, and `environment`.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-16.png)
 
-![servers table](../images/screenshots/week4/q-1.png)
 **Q17.** Show all servers and any services deployed on them. Include servers that have **no services** (use a `LEFT JOIN`). Display `hostname`, `environment`, and service `name` (NULL if none).
+![servers table](../images/screenshots/week4/q-17.png)
 
 **Q18.** List all deployments with the service name, the server hostname, and who deployed it. This requires joining `deployments → services → servers`.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-18.png)
 
 **Q19.** Find all services that have **never had a deployment**. Use a `LEFT JOIN` between `services` and `deployments` and filter for NULLs.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-19.png)
 
 **Q20.** Show every server alongside its unresolved alert count. Include servers with zero alerts (use `LEFT JOIN` + `GROUP BY`). Order by alert count descending.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-20.png)
 
 **Q21.** List all `critical` alerts together with the server `hostname`, `ip_address`, and the service `name` running on that server. Join `alerts → servers → services`.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-21.png)
 
 ---
 
