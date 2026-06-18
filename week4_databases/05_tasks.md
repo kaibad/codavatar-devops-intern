@@ -412,3 +412,1113 @@ task4=#
 ***explanation:*** The deletion of db-dev-01 failed because the logs table's foreign key (fk_server_logs) prevented removing a server that is still referenced by log records. Since the server row was not deleted, no effect occurred on the services table. The effect on services (cascade delete, set null, or restriction) would only be observable after resolving the blocking log references and successfully deleting the server.
 
 ---
+
+
+# 4.  Run MongoDB using Docker Compose.
+
+
+```yml
+services:
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpass
+      MONGO_INITDB_DATABASE: task4
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - "mongonet"
+
+volumes:
+  mongodata:
+
+networks:
+  mongonet:
+    driver: bridge
+```
+
+```bash
+docker compose -f week4_databases/postgresql-compose.yml up -d
+```
+
+![MONGODB with docker compose](../images/screenshots/week4/mongo-1.png)
+
+
+## mongo compass (since the mongo compass image is not availabe we will use similar but light weight web ui called mongo express)
+
+```yaml
+services:
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpass
+      MONGO_INITDB_DATABASE: task4
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - "mongonet"
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      # mongo db connection setting
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_URL: mongodb://admin:adminpass@mongodb:27017/
+
+      # web ui basic auth access
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: kailash
+      ME_CONFIG_BASICAUTH_PASSWORD: kailash
+    ports:
+      - "8085:8081"
+    networks:
+      - mongonet
+
+volumes:
+  mongodata:
+
+networks:
+  mongonet:
+    driver: bridge
+
+```
+
+### error and trouble shooting
+
+```bash
+
+
+Could not connect to database using connectionString: mongodb://admin:****@mongodb:27017/"
+/app/node_modules/mongodb/lib/cmap/connection.js:227
+                    callback(new error_1.MongoServerError(document));
+                             ^
+
+MongoServerError: Authentication failed.
+    at Connection.onMessage (/app/node_modules/mongodb/lib/cmap/connection.js:227:30)
+    at MessageStream.<anonymous> (/app/node_modules/mongodb/lib/cmap/connection.js:60:60)
+    at MessageStream.emit (node:events:517:28)
+    at processIncomingData (/app/node_modules/mongodb/lib/cmap/message_stream.js:125:16)
+    at MessageStream._write (/app/node_modules/mongodb/lib/cmap/message_stream.js:33:9)
+    at writeOrBuffer (node:internal/streams/writable:392:12)
+    at _write (node:internal/streams/writable:333:10)
+    at Writable.write (node:internal/streams/writable:337:10)
+    at Socket.ondata (node:internal/streams/readable:809:22)
+    at Socket.emit (node:events:517:28) {
+  ok: 0,
+  code: 18,
+  codeName: 'AuthenticationFailed',
+  connectionGeneration: 0,
+  [Symbol(errorLabels)]: Set(2) { 'HandshakeError', 'ResetPool' }
+}
+
+Node.js v18.20.3
+
+
+```
+
+This error is caused by a MongoDB username/password mismatch.
+
+In our mongodb service we create the root user:
+
+```yml
+MONGO_INITDB_ROOT_USERNAME: admin
+MONGO_INITDB_ROOT_PASSWORD: adminpass
+```
+
+So the valid credentials are:
+
+username: admin
+password: adminpass
+
+But our mongo-express container is trying to connect with:
+
+```yml
+ME_CONFIG_MONGODB_URL: mongodb://admin:adminpass123@mongodb:27017/
+```
+It uses:
+
+username: admin
+password: adminpass123  this is wrong
+
+which causes:
+
+MongoServerError: Authentication failed.
+codeName: AuthenticationFailed
+
+
+**Fix**
+
+Change:
+```
+ME_CONFIG_MONGODB_URL: mongodb://admin:adminpass@mongodb:27017/
+```
+
+**connection anme** task4
+**hostname** container name i.e postgres
+**db name** task4
+**username** kailash
+**password** kailash
+
+
+![Mongo express](../images/screenshots/week4/mongo-2.png)
+
+**mongo express web ui**
+![mongo express web uid](../images/screenshots/week4/mongo-3.png)
+
+
+## using env vars in docker compose
+
+```bash
+vim week4_databases/.env
+
+```
+
+```yml
+services:
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--username",
+          "${MONGO_ROOT_USERNAME}",
+          "--password",
+          "${MONGO_ROOT_PASSWORD}",
+          "--authenticationDatabase",
+          "admin",
+          "--eval",
+          "db.adminCommand('ping')"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - "mongonet"
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+    env_file:
+      - .env
+
+    environment:
+      # mongo db connection setting
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/?authSource=admin
+
+      # web ui basic auth access
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+    ports:
+      - "8085:8081"
+    networks:
+      - mongonet
+
+volumes:
+  mongodata:
+
+networks:
+  mongonet:
+    driver: bridge
+
+```
+
+**enter into the mongodb container** 
+
+```bash
+docker exec -it mongodb mongosh \
+-u admin \
+-p adminpass \
+--authenticationDatabase admin
+
+```
+```bash
+
+kailashbadu@ubuntu:~/Desktop/Learning/codavatar-devops-intern$ docker exec -it mongodb /bin/bash
+root@dd777441418b:/# mongosh
+Current Mongosh Log ID:	6a3390da6789a2a1679df8a2
+Connecting to:		mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.8.3
+Using MongoDB:		7.0.37
+Using Mongosh:		2.8.3
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+test> use task4;
+switched to db task4
+task4> db.task,insertOne({})
+ReferenceError: insertOne is not defined
+task4> 
+
+task4> db.tasks.insertOne({ name: "Kailash Badu",status: "created", createdAt: new Date()})
+MongoServerError[Unauthorized]: Command insert requires authentication
+task4> exit
+root@dd777441418b:/# mongosh  -u admin -p adminpass --authenticationDatabase admin
+Current Mongosh Log ID:	6a33918ea38894ecb79df8a2
+Connecting to:		mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin&appName=mongosh+2.8.3
+Using MongoDB:		7.0.37
+Using Mongosh:		2.8.3
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2026-06-18T06:28:49.516+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2026-06-18T06:28:49.779+00:00: Soft rlimits for open file descriptors too low
+------
+
+test> db.tasks.insertOne({ name: "Kailash Badu",status: "created", createdAt: new Date()})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a339193a38894ecb79df8a3')
+}
+test> show ebs
+MongoshInvalidInputError: [COMMON-10001] 'ebs' is not a valid argument for "show".
+test> show dbs
+admin   100.00 KiB
+config  108.00 KiB
+local    72.00 KiB
+test      8.00 KiB
+test> db.tasks.find()
+[
+  {
+    _id: ObjectId('6a339193a38894ecb79df8a3'),
+    name: 'Kailash Badu',
+    status: 'created',
+    createdAt: ISODate('2026-06-18T06:34:59.147Z')
+  }
+]
+test> 
+
+```
+---
+
+# 5. Create one MongoDB collection and insert/find/update/delete documents.
+
+## 1. Create Database and Collection
+
+**1. Create a database named `task4`.**
+
+```mongosh
+test> show dbs;
+admin   100.00 KiB
+config  148.00 KiB
+local    72.00 KiB
+test     40.00 KiB
+test> use task4;
+switched to db task4
+task4> show dbs;
+admin   100.00 KiB
+config  148.00 KiB
+local    72.00 KiB
+test     40.00 KiB
+task4>
+```
+
+**2. Create a collection named `users` inside the `task4` database.**
+
+```mongosh
+task4> show collections;
+
+task4> db.createCollection("users");
+{ ok: 1 }
+task4> show collections;
+users
+task4> 
+
+```
+
+## 2. Insert Documents
+
+**3. Insert one user document with the following fields:**
+
+```json
+{
+  "name": "Kailash",
+  "age": 25,
+  "email": "kailash@example.com",
+  "role": "developer"
+}
+```
+```mongosh
+
+MongoshInvalidInputError: [COMMON-10001] Missing required argument at position 0 (Collection.insertOne)
+task4> db.users.insertOne(
+| {
+| "name": "Kailash",
+| "age": 24,
+| "email": "kailash@codavatr.com"
+| "role": "DevOps Intern"
+Uncaught:
+SyntaxError: Unexpected token, expected "," (6:0)
+
+  4 | "age": 24,
+  5 | "email": "kailash@codavatr.com"
+> 6 | "role": "DevOps Intern"
+    | ^
+  7 |
+
+task4> db.users.insertOne( { "name": "Kailash", "age": 24, "email": "kailash@codavatr.com" "role": "DevOps Intern"})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:84)
+
+> 1 | db.users.insertOne( { "name": "Kailash", "age": 24, "email": "kailash@codavatr.com" "role": "DevOps Intern"})
+    |                                                                                     ^
+  2 |
+
+task4> db.users.insertOne( { "name": "Kailash", "age": 24, "email": "kailash@codavatr.com", "role": "DevOps Intern"})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a339abfa38894ecb79df8a4')
+}
+task4> db.users.find();
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  }
+]
+task4> 
+
+
+```
+
+**4. Insert multiple user documents at once:**
+```json
+[
+  {
+    "name": "Ram",
+    "age": 30,
+    "email": "ram@example.com",
+    "role": "admin"
+  },
+  {
+    "name": "Sita",
+    "age": 22,
+    "email": "sita@example.com",
+    "role": "tester"
+  },
+  {
+    "name": "Hari",
+    "age": 28,
+    "email": "hari@example.com",
+    "role": "developer"
+  }
+]
+```
+
+```mongosh
+
+task4> db.users.insertMany([
+|   {
+|     "name": "Ram",
+|     "age": 30,
+|     "email": "ram@example.com",
+|     "role": "admin"
+|   },
+|   {
+|     "name": "Sita",
+|     "age": 22,
+|     "email": "sita@example.com",
+|     "role": "tester"
+|   },
+|   {
+|     "name": "Hari",
+|     "age": 28,
+|     "email": "hari@example.com",
+|     "role": "developer"
+|   }
+| ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6a339b34a38894ecb79df8a5'),
+    '1': ObjectId('6a339b34a38894ecb79df8a6'),
+    '2': ObjectId('6a339b34a38894ecb79df8a7')
+  }
+}
+task4> db.users.find();
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    age: 22,
+    email: 'sita@example.com',
+    role: 'tester'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer'
+  }
+]
+task4> 
+
+
+```
+
+**5. Insert a new user with additional fields:**
+
+```json
+
+{
+  "name": "John",
+  "age": 35,
+  "email": "john@example.com",
+  "role": "manager",
+  "skills": [
+    "Docker",
+    "MongoDB",
+    "Node.js"
+  ]
+}
+```
+```mongosh
+task4> db.users.insertOne({
+|   "name": "John",
+|   "age": 35,
+|   "email": "john@example.com",
+|   "role": "manager",
+|   "skills": [
+|     "Docker",
+|     "MongoDB",
+|     "Node.js"
+|   ]
+| });
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a339b9aa38894ecb79df8a8')
+}
+task4> db.users.find();
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    age: 22,
+    email: 'sita@example.com',
+    role: 'tester'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer'
+  },
+  {
+    _id: ObjectId('6a339b9aa38894ecb79df8a8'),
+    name: 'John',
+    age: 35,
+    email: 'john@example.com',
+    role: 'manager',
+    skills: [ 'Docker', 'MongoDB', 'Node.js' ]
+  }
+]
+task4> 
+
+
+```
+
+## Find Operations
+
+**6. Find all users: Write a query to display all documents from the users collection.**
+
+```mongosh
+task4> db.users.find({}).pretty()
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    age: 22,
+    email: 'sita@example.com',
+    role: 'tester'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer'
+  },
+  {
+    _id: ObjectId('6a339b9aa38894ecb79df8a8'),
+    name: 'John',
+    age: 35,
+    email: 'john@example.com',
+    role: 'manager',
+    skills: [ 'Docker', 'MongoDB', 'Node.js' ]
+  }
+]
+task4> 
+
+```
+
+**7. Find a user by name: Find the user whose name is: kailash**
+
+```mongosh
+task4> db.users.find({name: "kailash"})
+
+task4> db.users.find({name: "Kailash"})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  }
+]
+task4> db.users.find({name: {$regex: "^kailash$",$options: "i"}})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  }
+]
+task4> 
+
+```
+
+**8. Find users by role. Find all users who have the role: developer**
+
+```mongosh
+task4> db.users.find({role: "developer"})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer'
+  }
+]
+task4> 
+
+```
+
+**9. Find users older than 25. Write a query to find users where: age > 25**
+```mongosh
+task4> db.users.find({age: {$gt: 25}})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer'
+  },
+  {
+    _id: ObjectId('6a339b9aa38894ecb79df8a8'),
+    name: 'John',
+    age: 35,
+    email: 'john@example.com',
+    role: 'manager',
+    skills: [ 'Docker', 'MongoDB', 'Node.js' ]
+  }
+]
+task4> db.users.find({age: {$gte: 25}})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer'
+  },
+  {
+    _id: ObjectId('6a339b9aa38894ecb79df8a8'),
+    name: 'John',
+    age: 35,
+    email: 'john@example.com',
+    role: 'manager',
+    skills: [ 'Docker', 'MongoDB', 'Node.js' ]
+  }
+]
+task4> db.users.find({age: {$lt: 25}})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    age: 22,
+    email: 'sita@example.com',
+    role: 'tester'
+  }
+]
+task4> db.users.find({age: {$lte: 25}})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'DevOps Intern'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    age: 22,
+    email: 'sita@example.com',
+    role: 'tester'
+  }
+]
+task4> 
+
+```
+
+
+**10. Find only specific fields**
+
+Display only: name, email
+
+Do not display:_id
+
+```mongosh
+task4> db.users.find({},{name:1,email:1})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    email: 'kailash@codavatr.com'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    email: 'ram@example.com'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    email: 'sita@example.com'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    email: 'hari@example.com'
+  },
+  {
+    _id: ObjectId('6a339b9aa38894ecb79df8a8'),
+    name: 'John',
+    email: 'john@example.com'
+  }
+]
+task4> db.users.find({},{_id:0,name:1,email:1})
+[
+  { name: 'Kailash', email: 'kailash@codavatr.com' },
+  { name: 'Ram', email: 'ram@example.com' },
+  { name: 'Sita', email: 'sita@example.com' },
+  { name: 'Hari', email: 'hari@example.com' },
+  { name: 'John', email: 'john@example.com' }
+]
+task4> 
+
+```
+
+## Update Operations
+
+**11. Update one document. Change Kailash's role from: developer to senior developer**
+```mongosh
+task4> db.users.find({name:"Kailash"},{$set: {role: "Associate DevOps Engineer"}})
+MongoServerError[Location16410]: FieldPath field names may not start with '$'. Consider using $getField or $setField.
+task4> db.users.updateOne({name:"Kailash"},{$set: {role: "Associate DevOps Engineer"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+task4> db.users.find({name:"Kailash"})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'Associate DevOps Engineer'
+  }
+]
+task4> 
+
+```
+
+**12. Add a new field, Add a new field called: 'experience' to Hari's document.* 
+```mongosh
+task4> db.users.updateOne({name: "Hari"},{$set {"experience": {role:"sales",years:2}})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:40)
+
+> 1 | db.users.updateOne({name: "Hari"},{$set {"experience": {role:"sales",years:2}})
+    |                                         ^
+  2 |
+
+task4> db.users.updateOne({name: "Hari"},{$set: {experience: {role:"sales",years:2}})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:77)
+
+> 1 | db.users.updateOne({name: "Hari"},{$set: {experience: {role:"sales",years:2}})
+    |                                                                              ^
+  2 |
+
+task4> db.users.updateOne({name: "Hari"},{$set: {experience: {role:"sales",years:2}}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+task4> db.users.find({name: "Hari"})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  }
+]
+task4> 
+
+```
+
+**13. Update multiple documents. Increase the age of all developers by 1.**
+```mongosh
+
+task4> db.users.find({name: "Hari"})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 28,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  }
+]
+task4> db.users.updateMany({role:'developer'},{$inc: {age: 1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+task4> db.users.find({name: "Hari"})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 29,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  }
+]
+
+```
+
+## Delete Operations
+
+**14. Delete one document**
+
+Delete the user whose email is: john@example.com
+
+
+```mongosh
+task4> db.users.deleteOne({email: "john@example.com"})
+{ acknowledged: true, deletedCount: 1 }
+task4> db.users.find({email:"john@example.com"})
+
+task4> 
+
+```
+**15. Delete multiple documents**
+
+Delete all users whose role is:tester
+
+```mongosh
+task4> db.users.find({role: "tester"})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a6'),
+    name: 'Sita',
+    age: 22,
+    email: 'sita@example.com',
+    role: 'tester'
+  }
+]
+task4> db.users.deleteMany({role: "tester"})
+{ acknowledged: true, deletedCount: 1 }
+task4> db.users.find({role: "tester"})
+
+task4> 
+```
+
+**16. Count documents**
+
+Find the total number of users in the collection.
+
+```mongosh
+
+task4> db.users.countDocuments();
+3
+task4> 
+
+
+```
+
+**17. Sort users**
+
+Display users sorted by:
+
+- age ascending
+
+- age descending
+
+```mongosh
+task4> db.users.find().sort({age:1})
+[
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'Associate DevOps Engineer'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 29,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  }
+]
+task4> db.users.find().sort({age:-1})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 29,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  },
+  {
+    _id: ObjectId('6a339abfa38894ecb79df8a4'),
+    name: 'Kailash',
+    age: 24,
+    email: 'kailash@codavatr.com',
+    role: 'Associate DevOps Engineer'
+  }
+]
+task4> 
+
+```
+
+**18. Limit results**
+
+Display only the first 2 users.
+
+```mongosh
+
+task4> db.users.find().sort({age:-1}).limit(2)
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 29,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  }
+]
+task4> 
+
+
+```
+
+**19. Search using multiple conditions**
+
+Find users where: age > 25 AND role = developer
+
+```mongosh
+
+task4> db.users.find({age: {$gt: 25}, $or: [{role: "developer"},{role: "admin"}]})
+[
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a5'),
+    name: 'Ram',
+    age: 30,
+    email: 'ram@example.com',
+    role: 'admin'
+  },
+  {
+    _id: ObjectId('6a339b34a38894ecb79df8a7'),
+    name: 'Hari',
+    age: 29,
+    email: 'hari@example.com',
+    role: 'developer',
+    experience: { role: 'sales', years: 2 }
+  }
+]
+task4>
+
+```
+
+**20. Drop collection**
+
+Delete the entire users collection.
+
+```mongosh
+task4> db.users.drop();
+true
+task4> show collections;
+
+task4> 
+
+
+```
