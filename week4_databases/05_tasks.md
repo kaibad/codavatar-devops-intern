@@ -401,43 +401,14 @@ task4=#
 ## Section 7 — DELETE
 
 **Q31.** Delete all `DEBUG` level logs older than 30 days to simulate a log rotation job.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-31.png)
 
 **Q32.** Delete all deployments linked to services that are currently in `failed` status. Use a subquery.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-32.png)
 
 **Q33.** Delete the server with hostname `db-dev-01`. Observe what happens to services that had `server_id` referencing it — explain why based on the constraint you defined in Q2.
-![servers table](../images/screenshots/week4/q-1.png)
+![servers table](../images/screenshots/week4/q-33.png)
+
+***explanation:*** The deletion of db-dev-01 failed because the logs table's foreign key (fk_server_logs) prevented removing a server that is still referenced by log records. Since the server row was not deleted, no effect occurred on the services table. The effect on services (cascade delete, set null, or restriction) would only be observable after resolving the blocking log references and successfully deleting the server.
 
 ---
-
-## Section 8 — Indexes, Views & Transactions
-
-**Q34.** Create a partial index on the `alerts` table that only indexes unresolved critical alerts (`resolved = FALSE AND severity = 'critical'`). Think about why a partial index is more efficient than a full index here.
-![servers table](../images/screenshots/week4/q-1.png)
-
-**Q35.** Create a view called `prod_service_health` that shows:
-- Server `hostname`
-- Service `name` and `status`
-- Latest deployment's `image_tag` and `success` flag
-- Total unresolved alerts for that server
-
-Then write a SELECT against the view to find all services in `failed` status.
-![servers table](../images/screenshots/week4/q-1.png)
-
----
-
-## Bonus — Transaction Block
-
-Write a transaction that does all of the following atomically:
-1. Inserts a new server `cache-prod-01` in `prod`, region `us-east-1`
-2. Inserts a `redis` service on that server (use the new server's ID — no hardcoding)
-3. Inserts a successful deployment for that service with image tag `redis:7.2`
-4. Rolls back everything if any step fails
-
-```sql
-BEGIN;
-  -- your statements here
-COMMIT;
-![servers table](../images/screenshots/week4/q-1.png)
-```
