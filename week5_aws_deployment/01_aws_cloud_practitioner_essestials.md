@@ -113,7 +113,7 @@ Within each Region, we have what we call Availability Zones, or AZs. There are t
 
 So, if a Region is where all the pieces and parts of your application live, some of you might be thinking that we never actually solved the problem that we presented earlier. If my business needs to be disaster proof, then it can't run in just one location. Well, you're absolutely correct. That's why it's common for businesses to operate across multiple Regions. That way, if one Region is experiencing outages for any reason, the operations can failover to another Region...but we'll cover that in more depth in a later lesson.
 
-<img src="https://skillbuilder.aws/cds/42a9221b-ff91-4cea-8023-62953205342d/assets/M01_L4_Infrastructure.jpg" alt="Rehion and Availability zones" width="100%">
+<img src="../images/screenshots/week5/ha.jpg" width="100%">
 
 ---
 
