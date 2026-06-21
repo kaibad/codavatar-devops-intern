@@ -2,11 +2,9 @@
 
 In this training, we use a coffee shop analogy to help you better understand basic cloud concepts. To explore the coffee shop and learn more about your instructors, choose each of the following four numbered markers.
 
-
 In our coffee shop example, a barista and customer were used to represent the client-server model. The barista represents the server and a customer represents the client.
 
 Which scenario BEST describes how the client-server model works in this analogy?
-
 
 The customer goes to the barista and places an order for a coffee. The barista prepares the coffee and hands it back to the customer. This describes how the client places the request, and the server responds.
 
@@ -121,10 +119,9 @@ So, if a Region is where all the pieces and parts of your application live, some
 
 The AWS Shared Responsibility Model is a concept designed to help AWS and customers work together to create a secure, functional cloud environment. I
 
-
 AWS = SECUIRTY OF THE CLOUD
-CUATOOMWR = SECURITY IN THE CLOUD
 
+CUSTOMERR = SECURITY IN THE CLOUD
 
 <img src="../images/screenshots/week5/srm1.png" alt="Shared Responsibility model" width="100%">
 <img src="../images/screenshots/week5/srm2.png" alt="Shared Responsibility model" width="100%">
@@ -135,16 +132,20 @@ Which statement BEST describes which party is responsible for applying security 
 
 Your company is responsible applying security patches to the OS.
 
-
 ---
 
 # Module 2: Compute in the Cloud
 
 Compute refers to the processing power needed to run applications, manage data, and perform calculations. In the cloud, this power is available on-demand. You can access it remotely without owning or maintaining physical hardware. Essentially, compute in the cloud means creating virtual machines with a cloud provider to run applications and tasks over the internet. Amazon Elastic Compute Cloud (Amazon EC2), a powerful compute service from AWS, as you explore its flexibility, cost-effectiveness, and scalability.
 
+## Introduction to Amazon EC2
 
+EC2 instances are virtual machines, or VMs. VMs share an underlying physical host machine with multiple other instances, which is a concept called multi-tenancy. In a multi-tenant environment, you need to make sure that each VM is isolated from each other but is still able to share resources provided by the host.
 
+This job of resource sharing and isolation is being done by a piece of software called a hypervisor, which is running on the host machine. For EC2, AWS manages the underlying host, the hypervisor, and the isolation from instance to instance. So, even though you won't be managing this piece, it's important to have a basic grasp of the concept of multi-tenancy.
 
+When you provision an EC2 instance, you can choose the operating system, or OS, based on either Windows or Linux. You can provision thousands of EC2 instances on demand, with a blend of operating systems and configurations to power your business' different applications.
 
 # REFERENCES
+
 https://skillbuilder.aws/learn/94T2BEN85A/aws-cloud-practitioner-essentials/8D79F3AVR7
