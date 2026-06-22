@@ -146,6 +146,181 @@ This job of resource sharing and isolation is being done by a piece of software 
 
 When you provision an EC2 instance, you can choose the operating system, or OS, based on either Windows or Linux. You can provision thousands of EC2 instances on demand, with a blend of operating systems and configurations to power your business' different applications.
 
+Amazon EC2 is more flexible, cost-effective, and faster than managing on-premises servers. It offers on-demand compute capacity that can be quickly launched, scaled, and terminated, with costs based only on active usage.
+
+The flexibility of Amazon EC2 allows for faster development and deployment of applications. You can launch as many or as few virtual servers as needed and configure security, networking, and storage. You can also scale resources up or down based on usage, such as handling high traffic or compute-heavy tasks.
+
+### Challenges of on-premises resources
+
+Imagine that you're responsible for designing your company's infrastructure to support new websites. With traditional on-premises resources, you must purchase hardware upfront, wait for delivery, and handle installation and configuration. This process is time-consuming, costly, and inflexible because you're locked into a specific capacity that might not align with changing demands.
+
+<img src="../images/screenshots/week5/OnPremises.png" alt="Challenges in On premises resource" width="100%">
+
+### Benefits of using Cloud Resources
+
+In contrast, with Amazon EC2, you can quickly launch, scale, and stop instances based on your needs without the delays and upfront costs associated with traditional on-premises resources.
+
+<img src="../images/screenshots/week5/CloudBenefits.png" alt="Benefits of using cloud resources" width="100%">
+
+### How Amazon EC2 works
+
+- Launch an instance
+- Connect to the instance
+- Use the instance
+
+## EC2 instance types
+
+### General Purpose
+
+General purpose instances provide a balanced mix of compute, memory, and networking resources. They are ideal for diverse workloads, like web services, code repositories, and when workload performance is uncertain.
+
+### Compute optimized
+Compute optimized instances are ideal for compute-intensive tasks, such as gaming servers, high performance computing (HPC), machine learning, and scientific modeling.
+
+### Memory optimized
+Memory optimized instances are used for memory-intensive tasks like processing large datasets, data analytics, and databases. They provide fast performance for memory-heavy workloads.
+
+### Accelerated Optimized
+Accelerated computing instances use hardware accelerators, like graphics processing units (GPUs), to efficiently handle tasks, such as floating-point calculations, graphics processing, and machine learning.
+
+### Storage Optimized
+
+Storage optimized instances are designed for workloads that require high performance for locally stored data, such as large databases, data warehousing, and I/O-intensive applications.
+
+### Interacting with AWS services
+
+All interactions with services are powered by APIs. You can access these APIs through three primary methods: the AWS Management Console, the AWS CLI, or the AWS SDK. Let's review these methods.
+
+### Launching an Amazon EC2 Instance
+
+**Amazon Machine Images** An AMI includes the operating system, storage setup, architecture type, permissions for launching, and any extra software that is already installed. You can use one AMI to launch several EC2 instances that all have the same setup.
+
+An AMI is a pre-configured virtual machine image that contains the operating system, application server, and applications. This helps to launch EC2 instances quickly with the desired software and settings.
+
+To launch an EC2 instance for a web server, configure the AMI to define the operating system and software; select the instance type to allocate CPU, memory, and storage; and set up storage options, including the type and size of the volume.
+
+Load balancing, permissions, and instance termination behavior are not required when launching a basic Amazon EC2 web server.
+
+### Dedicated hosts vs dedicated instases
+Dedicated Hosts provide exclusive use of a physical server, providing full control over placement and resource allocation. This is ideal for security-sensitive and licensing-specific workloads.
+
+<img src="../images/screenshots/week5/DedicatedInstanceHost.png" alt="Dedicates Hosts vs dedicated instances" width="100%">
+
+Spot Instances offer up to 90 percent off On-Demand pricing, making them the most cost-effective option for workloads that can tolerate interruptions.
+
+Reserved Instances require a 1-year or 3-year commitment, which is not suitable for a new application with unpredictable usage.
+
+On-Demand pricing is ideal for starting without commitment. The customer can test and adjust based on actual usage before committing to longer-term options.
+
+--- 
+## Scaling Amazon EC2
+
+**Scalability** refers to the ability of a system to handle an increased load by adding resources. You can scale up by adding more power to existing machines, or you can scale out by adding more machines. Scalability focuses on long-term capacity planning to make sure that the system can grow and accommodate more users or workloads as needed.
+
+**Elasticity** is the ability to automatically scale resources up or down in response to real-time demand. A system can then rapidly adjust its resources, scaling out during periods of high demand and scaling in when the demand decreases. Elasticity provides cost efficiency and optimal resource usage at any given moment.
+
+### Amazon EC2 Auto Scaling
+
+Amazon EC2 Auto Scaling automatically adjusts the number of EC2 instances based on changes in application demand, providing better availability. It offers two approaches. Dynamic scaling adjusts in real time to fluctuations in demand. Predictive scaling preemptively schedules the right number of instances based on anticipated demand.
+
+An Auto Scaling group is configured with the following three key settings.
+
+**Minimum capcity** The minimum capacity defines the least number of EC2 instances required to keep the application running. This makes sure that the system never scales below this threshold. It's the number of EC2 instances that launch immediately after you have created the Auto Scaling group. 
+
+**Desired Capacity** The desired capacity is the ideal number of instances needed to handle the current workload, which Auto Scaling aims to maintain. If you do not specify the desired number of EC2 instances in an Auto Scaling group, the desired capacity defaults to your minimum capacity.
+
+**Maximum Capacity** The maximum capacity sets an upper limit on the number of instances that can be launched, preventing over-scaling and controlling costs. For example, you might configure the Auto Scaling group to scale out in response to increased demand.
+
+<img src="../images/screenshots/week5/ASG.png" alt="Auto Scalling Group" width="100%">
+
+---
+
+## Directing Traffic with Elastic Load Balancing
+
+Spreading workloads improves the performance of your applications by preventing any single resource from having to handle the full workload on its own. In this lesson, you will learn how ELB simplifies traffic distribution and management for AWS applications.
+
+
+### Elastic Load Balancing
+
+Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple resources, such as EC2 instances, to optimize performance and reliability. A load balancer serves as the single point of contact for all incoming web traffic to an Auto Scaling group. As the number of EC2 instances fluctuates in response to traffic demands, incoming requests are first directed to the load balancer. From there, the traffic is distributed evenly across the available instances.
+    
+Although ELB and Amazon EC2 Auto Scaling are distinct services, they work in tandem to enhance application performance and ensure high availability. Together, they enable applications running on Amazon EC2 to scale effectively while maintaining consistent performance.
+
+ELB improves scalability by automatically distributing traffic to the EC2 instances with the least load, resulting in efficient traffic management. ELB scales elastically. This means it adjusts traffic routing based on demand without increasing hourly costs, which is a key benefit.
+
+### Routing methods
+
+To optimize traffic distribution, ELB uses several routing methods: Round Robin, Least Connections, IP Hash, and Least Response Time. These routing strategies work together for efficient traffic management and optimal application performance.
+
+<table>
+<tr>
+<td width="50%">
+**Round Robin**
+
+Distributes traffic evenly across all available servers in a cyclic manner.
+
+
+</td>
+
+<td width="50%">
+
+![ROund Robin](../assets/screenshots/RoundRobin.jpg)
+
+</td>
+</tr>
+</table>
+
+
+<table>
+<tr>
+
+<td width="50%">
+
+![Least Response Time](../assets/screenshots/LeastConnections.jpg)
+
+</td>
+<td width="50%">
+**Least Connections**
+Routes traffic to the server with the fewest active connections, maintaining a balanced load.
+</td>
+
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%">
+**IP Hash**
+Uses the client’s IP address to consistently route traffic to the same server.
+</td>
+
+<td width="50%">
+
+![IPHash](../assets/screenshots/IPHash.jpg)
+
+</td>
+</tr>
+</table>
+
+
+<table>
+<tr>
+
+<td width="50%">
+
+![least Response Time](../assets/screenshots/LeastResponseTime.jpg)
+
+</td>
+<td width="50%">
+**Least Response Time**
+
+Directs traffic to the server with the fastest response time, minimizing latency.
+</td>
+
+</tr>
+</table>
+
+
 # REFERENCES
 
 https://skillbuilder.aws/learn/94T2BEN85A/aws-cloud-practitioner-essentials/8D79F3AVR7
