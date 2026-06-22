@@ -264,7 +264,7 @@ Distributes traffic evenly across all available servers in a cyclic manner.
 
 <td width="50%">
 
-![ROund Robin](../assets/screenshots/RoundRobin.jpg)
+![ROund Robin](../images/screenshots/week5/RoundRobin.jpg)
 
 </td>
 </tr>
@@ -276,7 +276,7 @@ Distributes traffic evenly across all available servers in a cyclic manner.
 
 <td width="50%">
 
-![Least Response Time](../assets/screenshots/LeastConnections.jpg)
+![Least Response Time](../images/screenshots/week5/LeastConnections.jpg)
 
 </td>
 <td width="50%">
@@ -296,7 +296,7 @@ Uses the client’s IP address to consistently route traffic to the same server.
 
 <td width="50%">
 
-![IPHash](../assets/screenshots/IPHash.jpg)
+![IPHash](../images/screenshots/week5/IPHash.jpg)
 
 </td>
 </tr>
@@ -308,7 +308,7 @@ Uses the client’s IP address to consistently route traffic to the same server.
 
 <td width="50%">
 
-![least Response Time](../assets/screenshots/LeastResponseTime.jpg)
+![least Response Time](../images/screenshots/week5/LeastResponseTime.jpg)
 
 </td>
 <td width="50%">
