@@ -320,7 +320,53 @@ Directs traffic to the server with the fastest response time, minimizing latency
 </tr>
 </table>
 
+---
+
+
+## Exploring Compute Services
+
+### Introduction to Serverless Computing
+
+With serverless computing, you run applications without managing the underlying infrastructure. In the following lessons, you learn how to take full advantage of it with powerful compute services. You explore AWS Lambda, a serverless solution that automatically handles scaling, availability, and maintenance. You also discover services like Amazon Elastic Container Service (Amazon ECS), Amazon Elastic Kubernetes Service (Amazon EKS), and AWS Elastic Beanstalk, which make container management and application deployment more manageable. After completing these lessons, you will be ready to choose the best one for your needs.
+
+### Unmanaged and managed services
+
+AWS offers both unmanaged and managed services to suit different levels of control and responsibility. By understanding this model, you will know which tasks AWS manages and which you are responsible for, helping you secure and manage your cloud resources effectively.
+
+**Unmanaged and managed services**
+
+With unmanaged compute services like Amazon EC2, AWS takes care of the underlying physical infrastructure, but you're responsible for setting up, securing, and maintaining the operating system, network configurations, and applications on your instances. Managed services, on the other hand, reduce the amount of infrastructure you need to manage. While AWS handles much of the operational overhead, you might still need to perform some provisioning or configuration depending on the service.
+
+**Fully-managed services**
+
+Fully-managed services—like serverless ones—take abstraction even further, eliminating the need to provision or manage any servers at all. The underlying infrastructure is fully managed by AWS, so you can focus entirely on writing and deploying code. Later in this module, you will explore Lambda. Lambda is a serverless compute service where AWS handles the infrastructure, scaling, and availability, while you remain responsible for securing and managing your application code.
+
+![Managed and unmanaged services](../images/screenshots/week5/ManagedUnmanaged.png)
+
+With unmanaged services like Amazon EC2, you set up and manage everything: the operating system, security updates, and network settings. AWS only takes care of the physical hardware. Managed services handle most of the infrastructure for you, but you still need to set up things like deployment options, scaling, and environment settings. With fully managed services like AWS Lambda, you don’t manage any servers at all. You upload your code, and AWS takes care of the rest, including infrastructure, scaling, and availability. 
+
+---
+### AWS Lambda
+
+Lambda is a serverless compute service that runs code in response to events without the need to provision or manage servers. It automatically manages the underlying infrastructure, scaling resources based on the volume of requests. You are charged only for the compute time consumed, down to the millisecond. Lambda handles execution, scaling, and resource allocation. You can optimize performance by configuring the appropriate memory size for your function.
+
+![How lambda works](../images/screenshots/week5/LambdaWorks.png)
+
+### Lambda use cases
+
+Lambda is ideal for building responsive, event-driven applications across a wide range of industries. Here are three real-world examples that show how Lambda helps companies scale efficiently, reduce operational overhead, and only pay for what they use.
+
+**Real-time image processing for a social media application** A social media company uses Lambda to process images uploaded by users. When a photo is uploaded, Lambda is triggered to resize the image, apply filters, and save it in an optimized format to storage. This event-driven, serverless approach makes sure that the application can handle high volumes of uploads without needing to manage infrastructure. Why Lambda: It automatically scales based on uploads and charges only for the time spent processing each image.
+
+**Personalized content delivery for a news aggregator** A news aggregator uses Lambda to fetch and process news articles from multiple sources, then it tailors recommendations based on user preferences. When a user opens the application or performs a search, Lambda functions are triggered to retrieve data, run personalization logic, and return relevant content. Why Lambda: It automatically scales with user traffic and reduces costs by running code only when users interact.
+
+**Real time event handling for an online game** A gaming company uses Lambda to handle in-game events like player actions, game state changes, and real-time leader board updates. Each event (like scoring a point or unlocking an achievement) triggers a Lambda function that updates player data and game status. Why Lambda: It handles thousands of events, in real-time, with no need to manage servers. Costs scale with usage, which is ideal for peak gaming times.
+
+The key components of AWS Lambda are the function, triggers, and runtimes. These components handle code, respond to events, and provide the language environment. Customers do not need to manage servers, scaling, or operating systems. AWS takes care of all that.
+
+---
 
 # REFERENCES
 
 https://skillbuilder.aws/learn/94T2BEN85A/aws-cloud-practitioner-essentials/8D79F3AVR7
+- https://youtu.be/AgOmeANl3ls?si=JBdmb5v2d-I8YSST
