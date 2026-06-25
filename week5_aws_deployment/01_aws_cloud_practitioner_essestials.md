@@ -364,7 +364,183 @@ Lambda is ideal for building responsive, event-driven applications across a wide
 
 The key components of AWS Lambda are the function, triggers, and runtimes. These components handle code, respond to events, and provide the language environment. Customers do not need to manage servers, scaling, or operating systems. AWS takes care of all that.
 
+
+Lambda is perfect for this event-driven use case. It can run code in response to uploads and scale automatically based on the number of events.
+
 ---
+
+## Containers and Orchestration on AWS
+
+Containers provide a reliable way to package your application’s code and dependencies into a single, portable unit, making them ideal for workflows that require high security, reliability, and scalability.
+
+### Containers and VMs
+
+A container packages your application with everything it needs to run, so it works the same on any computer. This helps to move, update, and manage. Containers are faster and lighter than virtual machines (VMs) because they share the host computer’s operating system. VMs use a hypervisor to run full, separate operating systems, which makes them less resource-efficient and have longer startup times.
+
+
+![Containers ans VMs](../images/screenshots/week5/VMsAndContainers.png)
+
+### Deployment consistency with containers
+
+When a developer’s environment differs from staging or production, deployments can fail and become difficult to debug. Containers solve this by keeping the application’s environment consistent everywhere, making deployments smoother and assisting troubleshooting.
+
+### Scaling containers with orchestration
+
+As containerized applications scale, managing them becomes more complex. A setup that began with a few containers on a single host can quickly grow into hundreds or thousands of containers across multiple hosts. At that scale, manually handling container lifecycle, monitoring, and general operations becomes unsustainable. This is where orchestration tools come in. They automate deployment, scaling, and management to keep everything running smoothly.
+
+![Scalling with orchestration](../images/screenshots/week5/TenHosts.png)
+---
+
+## AWS container services
+
+AWS has a set of tools for managing containers that fits into three categories: orchestration, registry, and compute.
+
+### Amazon ECS
+
+Amazon Elastic Container Service (Amazon ECS) is a scalable container orchestration service for running and managing containers on AWS, like Docker containers. Docker is a software platform for building, testing, and deploying applications quickly.
+
+**Amazon ECS launch types**
+
+*Amazon ECS with Amazon EC2* is ideal for small-to-medium businesses that need full control over infrastructure. Suitable for custom applications requiring specific hardware or networking configurations, with the flexibility of Amazon EC2 and the simplicity of Amazon ECS.
+
+*Amazon ECS with AWS Fargate* is perfect for startups or small teams building web applications with variable traffic. It's a serverless option—no server management required—so teams can focus on development while Amazon ECS handles scaling and orchestration.
+
+### Amazon EKS
+
+Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed service for running Kubernetes on AWS. It simplifies deploying, managing, and scaling containerized applications using open-source Kubernetes, with ongoing support and updates from the broader community.
+
+**Amazon EKS launch types**
+
+*Amazon EKS with Amazon EC2:* This is best for enterprises needing full control over infrastructure. It offers deep customization of EC2 instances alongside Kubernetes scalability—ideal for complex, large-scale workloads.
+
+*Amazon EKS with AWS Fargate:* This is great for teams wanting Kubernetes flexibility without managing servers. It combines Kubernetes power with serverless simplicity, helping to scale applications quickly across various use cases.
+
+### Amazon ECR
+
+Amazon Elastic Container Registry (Amazon ECR) is where you can store, manage, and deploy container images. It supports container images that follow the Open Container Initiative (OCI) standards. You can push, pull, and manage images in your Amazon ECR repositories using standard container tooling and command line interfaces (CLIs).
+
+### Fargate
+
+AWS Fargate is a serverless compute engine for containers. It works with both Amazon ECS and Amazon EKS. Fargate is a container hosting platform, unlike Amazon ECS and Amazon EKS, which are both container orchestration services.
+
+When using Fargate, you do not need to provision or manage servers. Fargate manages your server infrastructure for you. You can focus more on innovating and developing your applications, and you pay only for the resources that are required to run your containers.
+
+---
+
+AWS Elastic Beanstalk is a managed service for deploying and scaling web applications. AWS Batch runs large-scale batch computing workloads. Amazon Lightsail offers simplified VPS, storage, and networking. AWS Outposts extends AWS services to on-premises environments.
+
+---
+
+## Key considerations when choosing Regions
+
+### Compliance
+
+Compliance is an important consideration when selecting Regions for deploying business resources. Different geographical locations have varying regulatory requirements and data protection laws that organizations must follow. For example, the General Data Protection Regulation (GDPR) is designed to protect the personal data and privacy of individuals within the European Union (EU). An online retail company operating in the EU would be required to meet GDPR compliance to protect customer data. GDPR compliance includes obtaining proper consent for data collection and providing mechanisms for data access and deletion.
+
+
+
+### Proximity
+
+When selecting a Region, you also want to consider how to achieve low latency for your users. Regions closer to your user base minimize data travel time, which reduces latency and enhances application responsiveness. Choosing a Region or set of Regions farther away from customers could introduce delays, which might impact user satisfaction and overall system efficiency.
+
+### Feature availability
+
+You also want to consider which specific features and services are available in each Region. AWS is constantly expanding features and services to multiple locations, but not all Regions contain all AWS offerings. For example, AWS GovCloud Regions are specifically designed to meet the compliance and security requirements of US government agencies and their contractors. These Regions have stringent physical, operational, and personnel security controls in place. These controls are only available in specific Regions to meet certain governmental regulatory requirements.
+
+### Pricing
+
+When selecting a Region, pricing is also a factor that can influence your decision. Some Regions have lower operational costs than others. These operational costs can impact the overall expenses for hosting applications and services. Tax laws and regulations can also play a role in cost. Some Regions might offer tax incentives or have lower tax rates, which can affect customer pricing. Additionally, data sovereignty laws in certain Regions might require data to be stored locally, affecting both compliance and cost.
+---
+
+## Deploying multi-Region and multi-AZ resources
+
+In addition to high availability, the AWS Global Infrastructure also helps you achieve agility and elasticity for your business. Let's discuss the difference between these advantages:
+
+**High availability:** High availability refers to the capability of a system to operate continuously without failing. In the context of AWS infrastructure, it means that your applications can handle the failure of individual components without significant downtime.
+
+**Agility:** Agility refers to the ability to quickly adapt to changing requirements or market conditions. With AWS infrastructure in place, you can modify and deploy services rapidly.
+
+**Elasticity:** Elasticity refers to the ability of a system to scale resources up or down automatically in response to changes in demand. AWS infrastructure is set up for you to scale resources up and down on demand.
+
+---
+
+## Networking in AWS
+
+The term networking refers to interconnected devices that can exchange data and resources. Networking in the AWS Cloud consists of the infrastructure and services working together to host your applications, data, and any other resources you might need. Let's get started and learn about the foundational network components used in the AWS Cloud.
+
+### Networking components
+
+***Amazon Virtual Private Cloud (Amazon VPC)*** An Amazon VPC lets you provision a logically isolated section of the AWS Cloud where you can launch AWS resources in a virtual network that you define.
+
+**Subnet**  Subnets are used to organize your resources and can be made publicly or privately accessible. A private subnet is commonly used to contain resources like a database storing customer or transactional information. A public subnet is commonly used for resources like a customer-facing website.
+
+Private subnets are designed to isolate resources that shouldn't be directly exposed to the public internet. In diagrams, they are illustrated with solid boxes.
+
+Public subnets are designed to provide direct internet access to resources placed inside them. To allow access, they are connected with an internet gateway. You will learn more about internet gateways in a later lesson. In diagrams, public subnets are drawn with dashed boxes.
+
+
+![Architecture Diagram](../images/screenshots/week5/NetworkDiagram4.png)
+
+Subnets are used to organize resources, share resources publicly, or isolate resources to keep them private.
+
+---
+
+## Connectivity 
+
+### security groups vs Network ACLs
+
+With both network ACLs and security groups, you can configure custom rules for the traffic in your VPC. As you continue to learn more about AWS security and networking, it is important to understand the differences between them. The following table will help you understand which to use.
+
+| Feature | Security Groups | Network ACLs |
+|----------|----------------|--------------|
+| **Scope** | Instance level (attached to EC2 instances) | Subnet level (associated with subnets) |
+| **State** | Stateful (remembers state) | Stateless (doesn't remember state) |
+| **Rule types** | Only allow type rules | Both allow and deny type rules |
+| **Return traffic** | Return traffic is automatically allowed if inbound traffic is allowed | Return traffic must be explicitly allowed in both directions |
+| **Uses** | Fine-grained control of traffic for individual EC2 instances | Broad control of traffic in and out of subnets |
+
+
+Remember the AWS Shared Responsibility Model? When it comes to securing the subnets and resources in your VPC with network ACLs and security groups, that is your responsibility. These components make up networking traffic protection and are critical defenses in protecting your applications IN the cloud.
+
+---
+
+## Building an Amazon VPC in the AWS Cloud
+
+<table>
+<tr>
+<td width="50%">
+**Create the Amazon VPC** Before you can create resources in the AWS Cloud, the first step is to create your own Amazon VPC.  You will also specify the Region best located for your resources.
+</td>
+<td width="50%">
+![VPC](../images/screenshots/week5/VPC Demo-1.png)
+</td>
+</tr>
+
+<tr>
+<td width="50%">
+**Create the subnets** You will create two public and private subnets across two availability zones. This is a best practice to achieve high availability.
+
+</td>
+<td width="50%">
+![Subnet](../images/screenshots/week5/VPCDemo-2.png)
+</td>
+</tr>
+
+<tr>
+<td width="50%">
+**Create an internet gateway and route traffic** Without an internet gateway, your users can't get to your resources. First, you create the internet gateway. Then, you create route tables to route traffic to allow internet traffic in and local traffic out.
+</td>
+<td width="50%">
+![IGW and route traffic](../images/screenshots/week5/VPC Demo-3.png)
+</td>
+</tr>
+
+</table>
+
+---
+
+***note*** The "53" in Amazon Route 53 refers to port 53, which is the standard TCP and UDP port used for DNS (Domain Name System) queries.  The name "Route" likely references U.S. Routes (highway naming conventions), while the number signifies the service's role in directing internet traffic via the standard DNS protocol established in 1983
+
 
 # REFERENCES
 
