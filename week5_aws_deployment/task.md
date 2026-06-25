@@ -54,7 +54,7 @@ A security group is a virtual firewall attached to your EC2 instance. By default
 
 **Why we set inbound rules carefully:** Opening all ports to `0.0.0.0/0` is a security risk. In production, port 22 should be restricted to your IP only. For this lab, we opened 22 and 80 to allow SSH and browser access.
 
-![Security Group Inbound Rules](../images/screenshots/week5.png)
+![Security Group Inbound Rules](../images/screenshots/week5/sg.png)
 
 ---
 
@@ -342,54 +342,63 @@ Amazon CloudFront is AWS's CDN service. It sits in front of your S3 bucket and:
 
 ### steps
 
+```html
 <table>
-<tr>
-<td width="50%">
-1. Set S3 Block Public Access Back ON. Also remove the public bucket policy if you added one earlier
-</td>
-<td width="50%">
-![S3 block all public access](../images/screenshots/week5/s3-block.png)
-</td>
-</tr>
+  <tr>
+    <td width="50%">
+      1. Set S3 Block Public Access back ON. Also remove the public bucket policy if you added one earlier.
+    </td>
+    <td width="50%">
+      <img src="../images/screenshots/week5/s3-block.png" alt="S3 block all public access">
+    </td>
+  </tr>
 
-<tr>
-<td width="50%">
-2. Create a CloudFront Distribution, Configure the Origin, 
-</td>
-<td width="50%">
-![Cloudfront Distribution ](../images/screenshots/week5/cf-1.png)
-</td>
-</tr>
+  <tr>
+    <td width="50%">
+      2. Create a CloudFront Distribution and configure the origin.
+    </td>
+    <td width="50%">
+      <img src="../images/screenshots/week5/cf-1.png" alt="CloudFront Distribution">
+    </td>
+  </tr>
 
-<tr>
-<td width="50%">
-3. Configure the Origin
-</td>
-<td width="50%">
-![Create OAC](../images/screenshots/week5/cf-origin.png)
-</td>
-<td width="50%">
-4. Apply the OAC Bucket Policy
-</td>
-<td width="50%">
-![Adding new Policy to S3](../images/screenshots/week5/cf-s3-bucket-policy.png)
-</td>
-</td>
-<td width="50%">
-5. Set Default Root Object
-</td>
-<td width="50%">
-![Set default object to index.html](../images/screenshots/week5/cf-distribution.png)
-</td>
-<td width="50%">
-6. Open https://d1g90u5quikjvy.cloudfront.net in browser 
-</td>
-<td width="50%">
-![Serving Site with CloudFront](../images/screenshots/week5/cf-site.png)
-</td>
-</tr>
+  <tr>
+    <td width="50%">
+      3. Configure the Origin Access Control (OAC).
+    </td>
+    <td width="50%">
+      <img src="../images/screenshots/week5/cf-origin.png" alt="Create OAC">
+    </td>
+  </tr>
 
+  <tr>
+    <td width="50%">
+      4. Apply the OAC bucket policy to the S3 bucket.
+    </td>
+    <td width="50%">
+      <img src="../images/screenshots/week5/cf-s3-bucket-policy.png" alt="Adding new policy to S3">
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%">
+      5. Set the Default Root Object to <code>index.html</code>.
+    </td>
+    <td width="50%">
+      <img src="../images/screenshots/week5/cf-distribution.png" alt="Set default object to index.html">
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%">
+      6. Open https://d1g90u5quikjvy.cloudfront.net in your browser.
+    </td>
+    <td width="50%">
+      <img src="../images/screenshots/week5/cf-site.png" alt="Serving site with CloudFront">
+    </td>
+  </tr>
 </table>
+```
 
 ---
 
