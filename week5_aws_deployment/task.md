@@ -342,11 +342,11 @@ Amazon CloudFront is AWS's CDN service. It sits in front of your S3 bucket and:
 
 ### steps
 
-```html
 <table>
   <tr>
     <td width="50%">
-      1. Set S3 Block Public Access back ON. Also remove the public bucket policy if you added one earlier.
+      <strong>1. Set S3 Block Public Access Back ON</strong><br>
+      Also remove the public bucket policy if you added one earlier.
     </td>
     <td width="50%">
       <img src="../images/screenshots/week5/s3-block.png" alt="S3 block all public access">
@@ -355,7 +355,8 @@ Amazon CloudFront is AWS's CDN service. It sits in front of your S3 bucket and:
 
   <tr>
     <td width="50%">
-      2. Create a CloudFront Distribution and configure the origin.
+      <strong>2. Create a CloudFront Distribution</strong><br>
+      Configure the origin.
     </td>
     <td width="50%">
       <img src="../images/screenshots/week5/cf-1.png" alt="CloudFront Distribution">
@@ -364,7 +365,7 @@ Amazon CloudFront is AWS's CDN service. It sits in front of your S3 bucket and:
 
   <tr>
     <td width="50%">
-      3. Configure the Origin Access Control (OAC).
+      <strong>3. Configure the Origin Access Control (OAC)</strong>
     </td>
     <td width="50%">
       <img src="../images/screenshots/week5/cf-origin.png" alt="Create OAC">
@@ -373,16 +374,17 @@ Amazon CloudFront is AWS's CDN service. It sits in front of your S3 bucket and:
 
   <tr>
     <td width="50%">
-      4. Apply the OAC bucket policy to the S3 bucket.
+      <strong>4. Apply the OAC Bucket Policy</strong>
     </td>
     <td width="50%">
-      <img src="../images/screenshots/week5/cf-s3-bucket-policy.png" alt="Adding new policy to S3">
+      <img src="../images/screenshots/week5/cf-s3-bucket-policy.png" alt="Adding new Policy to S3">
     </td>
   </tr>
 
   <tr>
     <td width="50%">
-      5. Set the Default Root Object to <code>index.html</code>.
+      <strong>5. Set Default Root Object</strong><br>
+      Set it to <code>index.html</code>.
     </td>
     <td width="50%">
       <img src="../images/screenshots/week5/cf-distribution.png" alt="Set default object to index.html">
@@ -391,14 +393,14 @@ Amazon CloudFront is AWS's CDN service. It sits in front of your S3 bucket and:
 
   <tr>
     <td width="50%">
-      6. Open https://d1g90u5quikjvy.cloudfront.net in your browser.
+      <strong>6. Open the CloudFront URL in your browser</strong><br>
+      https://d1g90u5quikjvy.cloudfront.net
     </td>
     <td width="50%">
-      <img src="../images/screenshots/week5/cf-site.png" alt="Serving site with CloudFront">
+      <img src="../images/screenshots/week5/cf-site.png" alt="Serving Site with CloudFront">
     </td>
   </tr>
 </table>
-```
 
 ---
 
