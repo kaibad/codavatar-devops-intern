@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopHive — Dev Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ──────────────────────────────────────────── */
+    :root {
+      --bg:         #0d0f0e;
+      --surface:    #131714;
+      --border:     #1f2421;
+      --green:      #3ddc84;
+      --green-dim:  #1e6b40;
+      --green-glow: rgba(61, 220, 132, 0.12);
+      --amber:      #f0b429;
+      --text:       #c9d1c8;
+      --text-dim:   #5a6659;
+      --text-bright:#eaf2e9;
+      --mono:       'JetBrains Mono', monospace;
+      --sans:       'Inter', sans-serif;
+      --radius:     4px;
+    }
+
+    /* ── Reset ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Topbar ──────────────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 52px;
+      background: rgba(13,15,14,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar__logo {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-bright);
+      letter-spacing: -0.02em;
+    }
+    .topbar__logo span { color: var(--green); }
+    .topbar__nav { display: flex; gap: 1.5rem; }
+    .topbar__nav a {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
+    .topbar__nav a:hover { color: var(--green); text-decoration: none; }
+    .topbar__badge {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      background: var(--green-glow);
+      color: var(--green);
+      border: 1px solid var(--green-dim);
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      min-height: 88vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 5rem 2rem 4rem;
+      max-width: 960px; margin: 0 auto;
+    }
+    .hero__eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--green);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .hero__eyebrow::before { content: '$ '; opacity: 0.5; }
+    .hero__headline {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      line-height: 1.15;
+      color: var(--text-bright);
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .hero__headline .accent { color: var(--green); }
+    .cursor {
+      display: inline-block;
+      width: 3px; height: 1em;
+      background: var(--green);
+      margin-left: 4px;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .hero__sub {
+      max-width: 520px;
+      font-size: 1rem;
+      color: var(--text-dim);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+    .hero__actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: var(--radius);
+      border: none; cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.03em;
+    }
+    .btn--primary {
+      background: var(--green);
+      color: #0d0f0e;
+    }
+    .btn--primary:hover {
+      background: #56e89a;
+      box-shadow: 0 0 20px rgba(61,220,132,0.35);
+      text-decoration: none; color: #0d0f0e;
+    }
+    .btn--ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn--ghost:hover {
+      border-color: var(--green-dim);
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    /* ── Terminal block ──────────────────────────────────── */
+    .terminal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin: 3rem auto;
+      max-width: 960px;
+      overflow: hidden;
+    }
+    .terminal__bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      background: #0f1210;
+      border-bottom: 1px solid var(--border);
+    }
+    .terminal__dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .terminal__dot--red   { background: #ff5f56; }
+    .terminal__dot--amber { background: #ffbd2e; }
+    .terminal__dot--green { background: #27c93f; }
+    .terminal__title {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-left: auto; margin-right: auto;
+    }
+    .terminal__body {
+      padding: 1.25rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 2;
+    }
+    .terminal__body .prompt { color: var(--green); }
+    .terminal__body .cmd    { color: var(--text-bright); }
+    .terminal__body .out    { color: var(--text-dim); }
+    .terminal__body .ok     { color: var(--green); }
+    .terminal__body .warn   { color: var(--amber); }
+
+    /* ── Products grid ───────────────────────────────────── */
+    .section {
+      max-width: 960px; margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+    .section__label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.5rem;
+    }
+    .section__title {
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 2.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.4rem;
+      cursor: pointer;
+      transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--green-glow);
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+    .card:hover { border-color: var(--green-dim); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
+    .card:hover::before { opacity: 1; }
+    .card__tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+      opacity: 0.8;
+    }
+    .card__name {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 0.4rem;
+    }
+    .card__desc {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-bottom: 1.2rem;
+      line-height: 1.55;
+    }
+    .card__footer {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card__price {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .card__btn {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--green-dim);
+      background: transparent;
+      color: var(--green);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .card__btn:hover { background: var(--green); color: #0d0f0e; }
+
+    /* ── Toast ───────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      background: var(--surface);
+      border: 1px solid var(--green-dim);
+      color: var(--green);
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 200;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    footer span { color: var(--green); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .topbar__nav { display: none; }
+      .hero__headline { font-size: 2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor { animation: none; opacity: 1; }
+      .card { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar__logo">Shop<span>Hive</span></div>
+    <nav class="topbar__nav">
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="404.html">Docs</a>
+    </nav>
+    <div class="topbar__badge">env: dev</div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="hero__eyebrow">deploy --env=production</p>
+    <h1 class="hero__headline">
+      The store that<br>
+      ships <span class="accent">fast</span><span class="cursor"></span>
+    </h1>
+    <p class="hero__sub">
+      ShopHive is a containerised e-commerce platform built on Django + React,
+      deployed via AWS CodeDeploy with a three-stage CI/CD pipeline.
+    </p>
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="#products">Browse Products</a>
+      <a class="btn btn--ghost" href="https://github.com/404bad" target="_blank" rel="noopener">View on GitHub</a>
+    </div>
+  </section>
+
+  <!-- Terminal block -->
+  <div class="terminal" style="margin: 0 2rem 4rem; max-width: 920px; margin-left: auto; margin-right: auto;">
+    <div class="terminal__bar">
+      <span class="terminal__dot terminal__dot--red"></span>
+      <span class="terminal__dot terminal__dot--amber"></span>
+      <span class="terminal__dot terminal__dot--green"></span>
+      <span class="terminal__title">shophive — pipeline output</span>
+    </div>
+    <div class="terminal__body" id="terminalBody">
+      <!-- lines injected by JS -->
+    </div>
+  </div>
+
+  <!-- Products -->
+  <section class="section" id="products">
+    <p class="section__label">// catalog</p>
+    <h2 class="section__title">Featured Products</h2>
+    <div class="grid" id="productGrid">
+      <!-- cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Footer -->
+  <footer id="about">
+    Built by <span>Jasper (Kailash)</span> · ShopHive DevOps Internship ·
+    Hosted on <span>AWS S3</span>
+  </footer>
+
+  <script>
+    /* ── Terminal typewriter ─────────────────────────────── */
+    const lines = [
+      { cls: 'prompt', text: '$ docker compose up --build' },
+      { cls: 'ok',     text: '✔ backend   — healthy (0.4s)' },
+      { cls: 'ok',     text: '✔ frontend  — healthy (1.1s)' },
+      { cls: 'ok',     text: '✔ postgres  — healthy (0.9s)' },
+      { cls: 'prompt', text: '$ aws s3 sync dist/ s3://shophive-frontend-dev/ --delete' },
+      { cls: 'out',    text: 'upload: dist/index.html → s3://shophive-frontend-dev/index.html' },
+      { cls: 'out',    text: 'upload: dist/assets/main-Bx9Qk.js → s3://…/assets/main-Bx9Qk.js' },
+      { cls: 'ok',     text: '✔ deploy complete — 3 files uploaded, 0 deleted' },
+      { cls: 'warn',   text: '⚠ CodeDeploy approval gate: waiting for manual review…' },
+    ];
+
+    const body = document.getElementById('terminalBody');
+    let i = 0;
+
+    function printLine() {
+      if (i >= lines.length) return;
+      const { cls, text } = lines[i++];
+      const p = document.createElement('p');
+      p.className = cls;
+      body.appendChild(p);
+
+      // typewrite each character
+      let j = 0;
+      const iv = setInterval(() => {
+        p.textContent += text[j++];
+        if (j >= text.length) {
+          clearInterval(iv);
+          setTimeout(printLine, 180);
+        }
+      }, 18);
+    }
+
+    // Start when terminal scrolls into view
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { printLine(); obs.disconnect(); }
+    }, { threshold: 0.3 });
+    obs.observe(body);
+
+
+    /* ── Product data ────────────────────────────────────── */
+    const products = [
+      { tag: 'Apparel', name: 'DevOps Hoodie', desc: 'Stay warm during on-call. 100% cotton blend with the ShopHive terminal logo.', price: '$42.00' },
+      { tag: 'Hardware', name: 'Mechanical Keyboard', desc: 'Tactile switches, TKL layout. Required equipment for 3 AM deploys.', price: '$118.00' },
+      { tag: 'Apparel', name: 'kubectl Tee', desc: '"kubectl apply -f me.yaml" — limited run. Soft tri-blend.', price: '$28.00' },
+      { tag: 'Accessories', name: 'Terminal Mug', desc: 'Ceramic. 350ml. Heat-sensitive coating reveals the CI pipeline on fill.', price: '$19.00' },
+      { tag: 'Hardware', name: 'USB-C Hub — 7-port', desc: 'One cable to rule your laptop, monitor, and three debug dongles.', price: '$54.00' },
+      { tag: 'Books', name: 'The Phoenix Project', desc: 'Required reading. Shipped same-day via fulfillment Lambda.', price: '$16.00' },
+    ];
+
+    const grid = document.getElementById('productGrid');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    products.forEach(({ tag, name, desc, price }) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card__tag">${tag}</div>
+        <div class="card__name">${name}</div>
+        <p class="card__desc">${desc}</p>
+        <div class="card__footer">
+          <span class="card__price">${price}</span>
+          <button class="card__btn" data-name="${name}">Add to cart</button>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.card__btn');
+      if (!btn) return;
+      const name = btn.dataset.name;
+      showToast(`✔ "${name}" added to cart`);
+    });
+
+    function showToast(msg) {
+      clearTimeout(toastTimer);
+      toast.textContent = msg;
+      toast.classList.add('show');
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+  </script>
+</body>
+</html>

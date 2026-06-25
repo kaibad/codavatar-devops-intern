@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — ShopHive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #0d0f0e;
+      --surface:    #131714;
+      --border:     #1f2421;
+      --green:      #3ddc84;
+      --green-dim:  #1e6b40;
+      --green-glow: rgba(61, 220, 132, 0.08);
+      --red:        #ff5f56;
+      --amber:      #f0b429;
+      --text:       #c9d1c8;
+      --text-dim:   #4a5449;
+      --text-bright:#eaf2e9;
+      --mono:       'JetBrains Mono', monospace;
+      --radius:     4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.07) 3px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .shell {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 680px;
+    }
+
+    /* Window chrome */
+    .window {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    }
+    .window__bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      background: #0f1210;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot {
+      width: 11px; height: 11px; border-radius: 50%;
+    }
+    .dot--red   { background: #ff5f56; }
+    .dot--amber { background: #ffbd2e; }
+    .dot--green { background: #27c93f; }
+    .window__title {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin: 0 auto;
+    }
+
+    .window__body { padding: 1.8rem 2rem 2rem; }
+
+    /* Error block */
+    .err-header {
+      display: flex; align-items: baseline; gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .err-code {
+      font-size: clamp(4rem, 14vw, 7rem);
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-shadow: 0 0 40px rgba(255,95,86,0.3);
+    }
+    .err-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      line-height: 1.4;
+    }
+    .err-label strong { display: block; color: var(--red); font-size: 0.85rem; }
+
+    /* Output lines */
+    .output { margin-bottom: 1.6rem; line-height: 2.1; font-size: 0.82rem; }
+    .line { display: block; }
+    .p   { color: var(--green); }     /* prompt */
+    .o   { color: var(--text-dim); }  /* stdout */
+    .e   { color: var(--red); }       /* stderr */
+    .w   { color: var(--amber); }     /* warning */
+    .b   { color: var(--text-bright); }
+
+    /* Progress bar */
+    .progress-wrap {
+      margin: 1.2rem 0 1.8rem;
+      background: var(--border);
+      border-radius: 2px;
+      height: 3px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: var(--green);
+      border-radius: 2px;
+      animation: diagnose 2.4s ease-out forwards;
+    }
+    @keyframes diagnose { to { width: 100%; } }
+
+    /* Actions */
+    .actions {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+      margin-top: 1.8rem;
+    }
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: var(--radius);
+      border: none; cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.02em;
+    }
+    .btn--primary {
+      background: var(--green);
+      color: #0d0f0e;
+    }
+    .btn--primary:hover {
+      background: #56e89a;
+      box-shadow: 0 0 18px rgba(61,220,132,0.3);
+    }
+    .btn--ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn--ghost:hover { border-color: var(--green-dim); color: var(--green); }
+
+    /* Path hint */
+    .path-hint {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    .path-hint span { color: var(--green); }
+
+    /* Cursor blink */
+    .cur {
+      display: inline-block;
+      width: 7px; height: 0.85em;
+      background: var(--green);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .progress-bar { animation: none; width: 100%; }
+      .cur { animation: none; }
+    }
+
+    @media (max-width: 480px) {
+      .window__body { padding: 1.2rem; }
+      .err-code { font-size: 4.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shell">
+    <div class="window">
+      <div class="window__bar">
+        <span class="dot dot--red"></span>
+        <span class="dot dot--amber"></span>
+        <span class="dot dot--green"></span>
+        <span class="window__title">bash — shophive-prod — 80×24</span>
+      </div>
+
+      <div class="window__body">
+        <div class="err-header">
+          <div class="err-code">404</div>
+          <div class="err-label">
+            <strong>NOT_FOUND</strong>
+            Resource does not exist<br>on this server.
+          </div>
+        </div>
+
+        <div class="output" id="output">
+          <span class="line p">$ curl -I https://shophive.dev<span id="requestPath"></span></span>
+          <span class="line o">  % Total    % Received   Xferd  Average   Time</span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-bar"></div>
+        </div>
+
+        <div class="output" id="result" style="opacity:0; transition: opacity 0.4s;">
+          <span class="line o">HTTP/2 <span class="e">404</span></span>
+          <span class="line o">content-type: text/html; charset=utf-8</span>
+          <span class="line o">server: AmazonS3</span>
+          <span class="line o">x-amz-request-id: 4B2F9E1A83C0DD71</span>
+          <span class="line e">Error: The specified key does not exist.</span>
+          <span class="line w">→ S3 routed request to error document: /404.html</span>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn--primary" onclick="goHome()">↩ cd ~</button>
+          <button class="btn btn--ghost" onclick="history.back()">← go back</button>
+        </div>
+
+        <div class="path-hint">
+          Requested path: <span id="pathDisplay">—</span>
+          &nbsp;·&nbsp; env: <span>dev</span>
+          &nbsp;·&nbsp; region: <span>ap-south-1</span>
+          <span class="cur"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show the path that 404'd
+    const path = window.location.pathname;
+    document.getElementById('requestPath').textContent = path;
+    document.getElementById('pathDisplay').textContent = path;
+
+    // Reveal result block after progress bar animation
+    setTimeout(() => {
+      document.getElementById('result').style.opacity = '1';
+    }, 2500);
+
+    function goHome() {
+      window.location.href = '/index.html';
+    }
+  </script>
+
+</body>
+</html>
