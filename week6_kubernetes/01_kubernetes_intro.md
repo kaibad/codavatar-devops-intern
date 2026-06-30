@@ -112,6 +112,37 @@ Kubernetes answers all of these questions. It treats your machines as a pool of 
 
 Kubernetes follows a **master-worker** architecture. The cluster is divided into two types of nodes:
 
+## What is a Kubernetes Cluster?
+
+A Kubernetes cluster is a set of node machines (physical or virtual) used to run containerized applications. It is logically divided into two main parts: the Control Plane (the brain) and the Data Plane (the workers). 
+
+Control Plane: Makes global decisions about the cluster (e.g., scheduling) and detects/responds to cluster events. 
+
+Data Plane (Worker Nodes): Executes the workloads (containers/pods) assigned by the control plane. 
+
+1. **Self-Managed Clusters (e.g., kubeadm, bare metal)**
+
+In this setup, we provision the machines ourself.
+
+Control Plane: Runs on specific machines designated as "master nodes." These nodes run components like the API Server, Scheduler, and etcd. 
+
+Data Plane: Runs on "worker nodes."
+
+Location: Both planes exist as processes on the VMs/bare-metal servers that you explicitly joined to form the cluster. 
+
+
+2. Managed Clusters (e.g., GKE, EKS, AKS)
+
+In cloud-managed offerings, the architecture is abstracted:
+
+Control Plane: Often runs in a separate, managed infrastructure owned by the cloud provider (e.g., in a dedicated VPC for EKS).  While logically part of your cluster, you do not see or manage the underlying nodes hosting the control plane.
+
+Data Plane: Runs on the worker nodes (node pools) that you create and manage within your own cloud project/subscription. 
+
+Location: The data plane is clearly "inside" your visible infrastructure. The control plane is "inside" the logical cluster boundary but physically hosted and managed by the cloud provider's backend systems. 
+
+
+---
 ![KUbernetes Architecture](../images/screenshots/week6/kubernetes-architecture.webp)
 
 **key point to remember**
