@@ -395,3 +395,6 @@ kubectl port-forward pod/<pod-name> 8080:80
 | Minikube | Local single-node Kubernetes cluster for learning |
 
 Kubernetes is the industry standard for running applications at scale. Every major cloud provider — AWS (EKS), Google Cloud (GKE), Azure (AKS) — offers a managed Kubernetes service. Learning Kubernetes locally with Minikube gives you the foundations to work confidently in any of these environments.
+
+# REFERENCES
+- https://www.igmguru.com/blog/kubernetes-architecture
